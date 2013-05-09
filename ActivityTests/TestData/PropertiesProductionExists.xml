@@ -1,0 +1,65 @@
+<HostedService xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Url>https://management.core.windows.net/80df9fae-60b7-4884-89a0-f7bec854e581/services/hostedservices/rangerazureguidanceapplication</Url>
+  <ServiceName>rangerazureguidanceapplication</ServiceName>
+  <HostedServiceProperties>
+    <Description />
+    <Location>North Central US</Location>
+    <Label>UmFuZ2VyIEF6dXJlIEd1aWRhbmNlIFNlcnZpY2U=</Label>
+  </HostedServiceProperties>
+  <Deployments>
+    <Deployment>
+      <Name>Deployment201203101046</Name>
+      <DeploymentSlot>Production</DeploymentSlot>
+      <PrivateID>401cd48c2b71472bba5b11c3203e4ec7</PrivateID>
+      <Status>Running</Status>
+      <Label>TGFiZWwyMDEyMDMxMDEwNDY=</Label>
+      <Url>http://rangerazureguidanceapplication.cloudapp.net/</Url>
+      <Configuration>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTE2Ij8+DQo8U2VydmljZUNvbmZpZ3VyYXRpb24geG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgeG1sbnM6eHNkPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYSIgc2VydmljZU5hbWU9IiIgb3NGYW1pbHk9IjEiIG9zVmVyc2lvbj0iKiIgeG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vU2VydmljZUhvc3RpbmcvMjAwOC8xMC9TZXJ2aWNlQ29uZmlndXJhdGlvbiI+DQogIDxSb2xlIG5hbWU9IkF6dXJlV2ViUm9sZSI+DQogICAgPENvbmZpZ3VyYXRpb25TZXR0aW5ncz4NCiAgICAgIDxTZXR0aW5nIG5hbWU9Ik1pY3Jvc29mdC5XaW5kb3dzQXp1cmUuUGx1Z2lucy5EaWFnbm9zdGljcy5Db25uZWN0aW9uU3RyaW5nIiB2YWx1ZT0iRGVmYXVsdEVuZHBvaW50c1Byb3RvY29sPWh0dHBzO0FjY291bnROYW1lPWhlbGxvYXp1cmVkaWFnbm9zdGljcztBY2NvdW50S2V5PXVLWVR6T1BaWER0a3psU2NlMFprcGRqUFVXdWVzUTJFTjB3Mk02czB0U29zSi91NWNpL05DbDhGRHhWYWF0TTZxYjlVNXNRa0dpMmhlY0k5U0xiTWZnPT0iIC8+DQogICAgPC9Db25maWd1cmF0aW9uU2V0dGluZ3M+DQogICAgPEluc3RhbmNlcyBjb3VudD0iMSIgLz4NCiAgICA8Q2VydGlmaWNhdGVzIC8+DQogIDwvUm9sZT4NCiAgPFJvbGUgbmFtZT0iQXp1cmVXb3JrZXJSb2xlIj4NCiAgICA8Q29uZmlndXJhdGlvblNldHRpbmdzPg0KICAgICAgPFNldHRpbmcgbmFtZT0iTWljcm9zb2Z0LldpbmRvd3NBenVyZS5QbHVnaW5zLkRpYWdub3N0aWNzLkNvbm5lY3Rpb25TdHJpbmciIHZhbHVlPSJVc2VEZXZlbG9wbWVudFN0b3JhZ2U9ZmFsc2UiIC8+DQogICAgPC9Db25maWd1cmF0aW9uU2V0dGluZ3M+DQogICAgPEluc3RhbmNlcyBjb3VudD0iMSIgLz4NCiAgICA8Q2VydGlmaWNhdGVzIC8+DQogIDwvUm9sZT4NCjwvU2VydmljZUNvbmZpZ3VyYXRpb24+</Configuration>
+      <RoleInstanceList>
+        <RoleInstance>
+          <RoleName>AzureWorkerRole</RoleName>
+          <InstanceName>AzureWorkerRole_IN_0</InstanceName>
+          <InstanceStatus>ReadyRole</InstanceStatus>
+          <InstanceUpgradeDomain>0</InstanceUpgradeDomain>
+          <InstanceFaultDomain>0</InstanceFaultDomain>
+          <InstanceSize>Small</InstanceSize>
+          <InstanceStateDetails />
+        </RoleInstance>
+        <RoleInstance>
+          <RoleName>AzureWebRole</RoleName>
+          <InstanceName>AzureWebRole_IN_0</InstanceName>
+          <InstanceStatus>ReadyRole</InstanceStatus>
+          <InstanceUpgradeDomain>0</InstanceUpgradeDomain>
+          <InstanceFaultDomain>0</InstanceFaultDomain>
+          <InstanceSize>Small</InstanceSize>
+          <InstanceStateDetails />
+        </RoleInstance>
+      </RoleInstanceList>
+      <UpgradeDomainCount>1</UpgradeDomainCount>
+      <RoleList>
+        <Role>
+          <RoleName>AzureWorkerRole</RoleName>
+          <OsVersion>WA-GUEST-OS-1.17_201112-03</OsVersion>
+          <RoleType i:nil="true" />
+          <SubnetNames xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+        </Role>
+        <Role>
+          <RoleName>AzureWebRole</RoleName>
+          <OsVersion>WA-GUEST-OS-1.17_201112-03</OsVersion>
+          <RoleType i:nil="true" />
+          <SubnetNames xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+        </Role>
+      </RoleList>
+      <SdkVersion>#1.6.21103.1459</SdkVersion>
+      <InputEndpointList>
+        <InputEndpoint>
+          <RoleName>AzureWebRole</RoleName>
+          <Vip>65.52.192.216</Vip>
+          <Port>80</Port>
+        </InputEndpoint>
+      </InputEndpointList>
+      <Locked>false</Locked>
+      <RollbackAllowed>false</RollbackAllowed>
+    </Deployment>
+  </Deployments>
+</HostedService>

@@ -1,0 +1,11 @@
+<HostedService xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Url>https://management.core.windows.net/80df9fae-60b7-4884-89a0-f7bec854e581/services/hostedservices/rangerazureguidanceapplication</Url>
+  <ServiceName>rangerazureguidanceapplication</ServiceName>
+  <HostedServiceProperties>
+    <Description />
+    <Location>North Central US</Location>
+    <Label>UmFuZ2VyIEF6dXJlIEd1aWRhbmNlIFNlcnZpY2U=</Label>
+  </HostedServiceProperties>
+  <Deployments>
+  </Deployments>
+</HostedService>
