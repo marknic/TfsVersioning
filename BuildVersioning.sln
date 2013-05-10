@@ -1,0 +1,80 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{89BB0381-5440-4BA3-BCBE-D7231E1B6744}"
+	ProjectSection(SolutionItems) = preProject
+		BuildVersioning.vsmdi = BuildVersioning.vsmdi
+		TfsBuild.testsettings = TfsBuild.testsettings
+		TfsVersion\VersionSeed.xml = TfsVersion\VersionSeed.xml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsBuild.Versioning.Activities.Tests.Stubs", "Stubs\TfsBuild.Versioning.Activities.Tests.Stubs.csproj", "{B65172D4-62BB-4601-853A-C830593183FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsBuild.Versioning.Activities", "TfsBuild.Versioning.Activities\TfsBuild.Versioning.Activities.csproj", "{F44C079C-A474-47B9-8874-4FB835A425DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsBuild.Versioning.Activities.Tests", "TfsBuild.Versioning.Activities.Tests\TfsBuild.Versioning.Activities.Tests.csproj", "{13254591-73C3-4121-92EB-7F64584C0788}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 4
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs01
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = TfsBuild.Versioning.Activities\\TfsBuild.Versioning.Activities.csproj
+		SccProjectName1 = TfsBuild.Versioning.Activities
+		SccLocalPath1 = TfsBuild.Versioning.Activities
+		SccProjectUniqueName2 = TfsBuild.Versioning.Activities.Tests\\TfsBuild.Versioning.Activities.Tests.csproj
+		SccProjectName2 = TfsBuild.Versioning.Activities.Tests
+		SccLocalPath2 = TfsBuild.Versioning.Activities.Tests
+		SccProjectUniqueName3 = Stubs\\TfsBuild.Versioning.Activities.Tests.Stubs.csproj
+		SccProjectName3 = Stubs
+		SccLocalPath3 = Stubs
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = BuildVersioning.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|Win32 = Debug|Win32
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|Win32 = Release|Win32
+		Description = Custom Workflow Activity for use with TFS Build 2010 that handles versioning assemblies
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B65172D4-62BB-4601-853A-C830593183FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B65172D4-62BB-4601-853A-C830593183FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B65172D4-62BB-4601-853A-C830593183FF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B65172D4-62BB-4601-853A-C830593183FF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B65172D4-62BB-4601-853A-C830593183FF}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{B65172D4-62BB-4601-853A-C830593183FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B65172D4-62BB-4601-853A-C830593183FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B65172D4-62BB-4601-853A-C830593183FF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B65172D4-62BB-4601-853A-C830593183FF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B65172D4-62BB-4601-853A-C830593183FF}.Release|Win32.ActiveCfg = Release|Any CPU
+		{F44C079C-A474-47B9-8874-4FB835A425DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F44C079C-A474-47B9-8874-4FB835A425DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F44C079C-A474-47B9-8874-4FB835A425DA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F44C079C-A474-47B9-8874-4FB835A425DA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F44C079C-A474-47B9-8874-4FB835A425DA}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{F44C079C-A474-47B9-8874-4FB835A425DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F44C079C-A474-47B9-8874-4FB835A425DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F44C079C-A474-47B9-8874-4FB835A425DA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F44C079C-A474-47B9-8874-4FB835A425DA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F44C079C-A474-47B9-8874-4FB835A425DA}.Release|Win32.ActiveCfg = Release|Any CPU
+		{13254591-73C3-4121-92EB-7F64584C0788}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13254591-73C3-4121-92EB-7F64584C0788}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13254591-73C3-4121-92EB-7F64584C0788}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{13254591-73C3-4121-92EB-7F64584C0788}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{13254591-73C3-4121-92EB-7F64584C0788}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{13254591-73C3-4121-92EB-7F64584C0788}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13254591-73C3-4121-92EB-7F64584C0788}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13254591-73C3-4121-92EB-7F64584C0788}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{13254591-73C3-4121-92EB-7F64584C0788}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{13254591-73C3-4121-92EB-7F64584C0788}.Release|Win32.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

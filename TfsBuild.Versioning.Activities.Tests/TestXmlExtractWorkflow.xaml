@@ -1,0 +1,71 @@
+﻿<Activity mc:Ignorable="sap" x:Class="TfsBuild.Versioning.Activities.Tests.TestXmlExtractWorkflow" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mv="clr-namespace:Microsoft.VisualBasic;assembly=System" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:s1="clr-namespace:System;assembly=System" xmlns:s2="clr-namespace:System;assembly=System.Xml" xmlns:s3="clr-namespace:System;assembly=System.Core" xmlns:s4="clr-namespace:System;assembly=mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xmlns:s5="clr-namespace:System;assembly=System.ServiceModel" xmlns:sa="clr-namespace:System.Activities;assembly=System.Activities, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" xmlns:sa1="clr-namespace:System.Activities;assembly=System.Activities" xmlns:sad="clr-namespace:System.Activities.Debugger;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System" xmlns:scg1="clr-namespace:System.Collections.Generic;assembly=System.ServiceModel" xmlns:scg2="clr-namespace:System.Collections.Generic;assembly=System.Core" xmlns:scg3="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:scg4="clr-namespace:System.Collections.Generic;assembly=mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xmlns:si="clr-namespace:System.IO;assembly=mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xmlns:sl="clr-namespace:System.Linq;assembly=System.Core" xmlns:st="clr-namespace:System.Text;assembly=mscorlib" xmlns:tsa="clr-namespace:TfsBuild.Versioning.Activities;assembly=TfsBuild.Versioning.Activities" xmlns:tt="clr-namespace:TfsBuild.Versioning.Activities.Tests" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="XmlFilePath" Type="InArgument(x:String)">
+      <x:Property.Attributes>
+        <RequiredArgumentAttribute />
+      </x:Property.Attributes>
+    </x:Property>
+    <x:Property Name="AssemblyVersionPattern" Type="OutArgument(x:String)" />
+    <x:Property Name="SolutionName" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyVersionXpathExpression" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyFileVersionPattern" Type="OutArgument(x:String)" />
+    <x:Property Name="AssemblyFileVersion" Type="OutArgument(x:String)" />
+    <x:Property Name="AssemblyVersion" Type="OutArgument(x:String)" />
+  </x:Members>
+  <sap:VirtualizedContainerService.HintSize>526,994</sap:VirtualizedContainerService.HintSize>
+  <mva:VisualBasic.Settings>Assembly references and imported namespaces serialized as XML namespaces</mva:VisualBasic.Settings>
+  <Sequence DisplayName="Get Version Number Patterns" sad:XamlDebuggerXmlReader.FileName="D:\_TfsProjects\BuildActivities\Main\Source\TfsBuild.Versioning.Activities.Tests\TestXmlExtractWorkflow.xaml" sap:VirtualizedContainerService.HintSize="486,954" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces">
+    <sap:WorkflowViewStateService.ViewState>
+      <scg3:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg3:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <Assign sap:VirtualizedContainerService.HintSize="464,58">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[AssemblyVersionXpathExpression]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">["/VersionSeed/Solution[@name='" + SolutionName + "']/AssemblyVersionPattern"]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <tsa:XmlExtract DisplayName="ExtractAssemblyVersionPattern" FilePath="[XmlFilePath]" sap:VirtualizedContainerService.HintSize="464,22" NodeValue="[AssemblyVersionPattern]" XPathExpression="[AssemblyVersionXpathExpression]" />
+    <Assign sap:VirtualizedContainerService.HintSize="464,58">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[AssemblyVersionXpathExpression]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">["/VersionSeed/Solution[@name='" + SolutionName + "']/AssemblyFileVersionPattern"]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <tsa:XmlExtract DisplayName="ExtractAssemblyFileVersionPattern" FilePath="[XmlFilePath]" sap:VirtualizedContainerService.HintSize="464,22" NodeValue="[AssemblyFileVersionPattern]" XPathExpression="[AssemblyVersionXpathExpression]" />
+    <If Condition="[AssemblyVersionPattern = &quot;Value Not Found&quot;]" DisplayName="If Values not found for solution name then check Default" sap:VirtualizedContainerService.HintSize="464,510">
+      <If.Then>
+        <Sequence sap:VirtualizedContainerService.HintSize="301,404">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg3:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg3:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <Assign sap:VirtualizedContainerService.HintSize="242,58">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[AssemblyVersionXpathExpression]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">["/VersionSeed/Solution[@name='Default']/AssemblyVersionPattern"]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <tsa:XmlExtract DisplayName="Extract Default Pattern" FilePath="[XmlFilePath]" sap:VirtualizedContainerService.HintSize="242,22" NodeValue="[AssemblyVersionPattern]" XPathExpression="[AssemblyVersionXpathExpression]" />
+          <Assign sap:VirtualizedContainerService.HintSize="242,58">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[AssemblyVersionXpathExpression]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">["/VersionSeed/Solution[@name='Default']/AssemblyFileVersionPattern"]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <tsa:XmlExtract DisplayName="Extract Default Pattern" FilePath="[XmlFilePath]" sap:VirtualizedContainerService.HintSize="242,22" NodeValue="[AssemblyFileVersionPattern]" XPathExpression="[AssemblyVersionXpathExpression]" />
+        </Sequence>
+      </If.Then>
+    </If>
+  </Sequence>
+</Activity>

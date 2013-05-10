@@ -1,0 +1,20 @@
+﻿<Activity mc:Ignorable="sap" x:Class="TfsBuild.Versioning.Activities.Tests.TestReplaceAssemblyInfoPropertiesWorkflow" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mtbc="clr-namespace:Microsoft.TeamFoundation.Build.Client;assembly=Microsoft.TeamFoundation.Build.Client" xmlns:mv="clr-namespace:Microsoft.VisualBasic;assembly=System" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:s1="clr-namespace:System;assembly=System" xmlns:s2="clr-namespace:System;assembly=System.Xml" xmlns:s3="clr-namespace:System;assembly=System.Core" xmlns:s4="clr-namespace:System;assembly=System.ServiceModel" xmlns:sa="clr-namespace:System.Activities;assembly=System.Activities" xmlns:sad="clr-namespace:System.Activities.Debugger;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System" xmlns:scg1="clr-namespace:System.Collections.Generic;assembly=System.ServiceModel" xmlns:scg2="clr-namespace:System.Collections.Generic;assembly=System.Core" xmlns:scg3="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:sl="clr-namespace:System.Linq;assembly=System.Core" xmlns:st="clr-namespace:System.Text;assembly=mscorlib" xmlns:tva="clr-namespace:TfsBuild.Versioning.Activities;assembly=TfsBuild.Versioning.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="FilePath" Type="InArgument(x:String)" />
+    <x:Property Name="ForceCreate" Type="InArgument(x:Boolean)" />
+    <x:Property Name="AssemblyDescriptionReplacementPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyCompanyReplacementPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyConfigurationReplacementPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyCopyrightReplacementPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyCultureReplacementPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyProductReplacementPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyTitleReplacementPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyTrademarkReplacementPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyInformationalVersionReplacementPattern" Type="InArgument(x:String)" />
+    <x:Property Name="BuildDetail" Type="InArgument(mtbc:IBuildDetail)" />
+    <x:Property Name="BuildDate" Type="InArgument(s:DateTime)" />
+  </x:Members>
+  <sap:VirtualizedContainerService.HintSize>240,240</sap:VirtualizedContainerService.HintSize>
+  <mva:VisualBasic.Settings>Assembly references and imported namespaces for internal implementation</mva:VisualBasic.Settings>
+  <tva:ReplaceAssemblyInfoProperties AssemblyCompany="[AssemblyCompanyReplacementPattern]" AssemblyConfiguration="[AssemblyConfigurationReplacementPattern]" AssemblyCopyright="[AssemblyCopyrightReplacementPattern]" AssemblyCulture="[AssemblyCultureReplacementPattern]" AssemblyDescription="[AssemblyDescriptionReplacementPattern]" AssemblyInformationalVersion="[AssemblyInformationalVersionReplacementPattern]" AssemblyProduct="[AssemblyProductReplacementPattern]" AssemblyTitle="[AssemblyTitleReplacementPattern]" AssemblyTrademark="[AssemblyTrademarkReplacementPattern]" BuildDate="[BuildDate]" BuildDetail="[BuildDetail]" sad:XamlDebuggerXmlReader.FileName="D:\_TfsProjects\BuildActivities\SolutionBuildVersioning\Dev\Version 1.5.0.0\TfsBuild.Versioning.Activities.Tests\TestReplaceAssemblyInfoPropertiesWorkflow.xaml" FilePath="[FilePath]" ForceCreate="[ForceCreate]" sap:VirtualizedContainerService.HintSize="200,200" />
+</Activity>

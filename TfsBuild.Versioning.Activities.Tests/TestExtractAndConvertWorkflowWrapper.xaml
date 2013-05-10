@@ -1,0 +1,65 @@
+﻿<Activity mc:Ignorable="sap" x:Class="TfsBuild.Versioning.Activities.Tests.TestExtractAndConvertWorkflowWrapper" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mt="clr-namespace:Microsoft.TeamFoundation;assembly=Microsoft.TeamFoundation.Common" xmlns:mtbc="clr-namespace:Microsoft.TeamFoundation.Build.Client;assembly=Microsoft.TeamFoundation.Build.Client, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" xmlns:mtbc1="clr-namespace:Microsoft.TeamFoundation.Build.Client;assembly=Microsoft.TeamFoundation.Build.Client" xmlns:mtbw="clr-namespace:Microsoft.TeamFoundation.Build.Workflow;assembly=Microsoft.TeamFoundation.Build.Workflow" xmlns:mtbwa="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Activities;assembly=Microsoft.TeamFoundation.Build.Workflow" xmlns:mtbwt="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Tracking;assembly=Microsoft.TeamFoundation.Build.Workflow" xmlns:mtvc="clr-namespace:Microsoft.TeamFoundation.VersionControl.Client;assembly=Microsoft.TeamFoundation.VersionControl.Client" xmlns:mv="clr-namespace:Microsoft.VisualBasic;assembly=System" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:s="clr-namespace:System;assembly=mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xmlns:s1="clr-namespace:System;assembly=mscorlib" xmlns:s2="clr-namespace:System;assembly=System" xmlns:s3="clr-namespace:System;assembly=System.Xml" xmlns:s4="clr-namespace:System;assembly=System.Core" xmlns:s5="clr-namespace:System;assembly=System.ServiceModel" xmlns:sa="clr-namespace:System.Activities;assembly=System.Activities" xmlns:sad="clr-namespace:System.Activities.Debugger;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sc="clr-namespace:System.ComponentModel;assembly=System" xmlns:sc1="clr-namespace:System.ComponentModel;assembly=WindowsBase" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:scg1="clr-namespace:System.Collections.Generic;assembly=System" xmlns:scg2="clr-namespace:System.Collections.Generic;assembly=System.ServiceModel" xmlns:scg3="clr-namespace:System.Collections.Generic;assembly=System.Core" xmlns:scg4="clr-namespace:System.Collections.Generic;assembly=mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing" xmlns:si="clr-namespace:System.IO;assembly=mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xmlns:si1="clr-namespace:System.IO;assembly=System.Core" xmlns:si2="clr-namespace:System.IO;assembly=System" xmlns:si3="clr-namespace:System.IO;assembly=System.ServiceModel" xmlns:si4="clr-namespace:System.IO;assembly=mscorlib" xmlns:si5="clr-namespace:System.IO;assembly=WindowsBase" xmlns:sl="clr-namespace:System.Linq;assembly=System.Core" xmlns:sl1="clr-namespace:System.Linq;assembly=System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xmlns:sr="clr-namespace:System.Reflection;assembly=mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xmlns:st="clr-namespace:System.Text;assembly=mscorlib" xmlns:str="clr-namespace:System.Text.RegularExpressions;assembly=System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xmlns:sx="clr-namespace:System.Xml;assembly=System.Data" xmlns:sx1="clr-namespace:System.Xml;assembly=System.Xml" xmlns:tva="clr-namespace:TfsBuild.Versioning.Activities;assembly=TfsBuild.Versioning.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="BuildNumber" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyFileVersionReplacementPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyVersionReplacementPattern" Type="InArgument(x:String)" />
+    <x:Property Name="ForceCreateVersion" Type="InArgument(x:Boolean)" />
+    <x:Property Name="FolderToSearch" Type="InArgument(x:String)" />
+    <x:Property Name="FileSearchPattern" Type="InArgument(x:String)" />
+    <x:Property Name="BuildNumberPrefix" Type="InArgument(x:Int32)" />
+  </x:Members>
+  <sap:VirtualizedContainerService.HintSize>349,726</sap:VirtualizedContainerService.HintSize>
+  <mva:VisualBasic.Settings>Assembly references and imported namespaces for internal implementation</mva:VisualBasic.Settings>
+  <Sequence sad:XamlDebuggerXmlReader.FileName="D:\_TfsProjects\BuildActivities\SolutionBuildVersioning\Main\Source\TfsBuild.Versioning.Activities.Tests\TestExtractAndConvertWorkflowWrapper.xaml" sap:VirtualizedContainerService.HintSize="309,686">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="si4:DirectoryInfo" Name="DirectoryInfo" />
+      <Variable x:TypeArguments="si4:FileInfo[]" Name="FileInfoList" />
+      <Variable x:TypeArguments="scg:List(x:String)" Name="FileList" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <Assign sap:VirtualizedContainerService.HintSize="287,58">
+      <Assign.To>
+        <OutArgument x:TypeArguments="si4:DirectoryInfo">[DirectoryInfo]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="si4:DirectoryInfo">[New DirectoryInfo(FolderToSearch)]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign sap:VirtualizedContainerService.HintSize="287,58">
+      <Assign.To>
+        <OutArgument x:TypeArguments="si4:FileInfo[]">[FileInfoList]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="si4:FileInfo[]">[DirectoryInfo.GetFiles(FileSearchPattern)]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign sap:VirtualizedContainerService.HintSize="287,58">
+      <Assign.To>
+        <OutArgument x:TypeArguments="scg:List(x:String)">[FileList]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="scg:List(x:String)">[New List(Of String)]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ForEach x:TypeArguments="si4:FileInfo" DisplayName="ForEach&lt;FileInfo&gt;" sap:VirtualizedContainerService.HintSize="287,206" Values="[FileInfoList]">
+      <ActivityAction x:TypeArguments="si4:FileInfo">
+        <ActivityAction.Argument>
+          <DelegateInArgument x:TypeArguments="si4:FileInfo" Name="file" />
+        </ActivityAction.Argument>
+        <AddToCollection x:TypeArguments="x:String" Collection="[FileList]" DisplayName="AddToCollection&lt;String&gt;" sap:VirtualizedContainerService.HintSize="257,100" Item="[file.Name]" />
+      </ActivityAction>
+    </ForEach>
+    <!--<tva:UpdateAssemblyInfoFileVersion AssemblyFileVersion="[AssemblyFileVersionReplacementPattern]" AssemblyInfoFileList="[FileList]" AssemblyVersion="[AssemblyVersionReplacementPattern]" BuildNumber="[BuildNumber]" BuildNumberPrefix="[BuildNumberPrefix]" ForceCreateVersion="[ForceCreateVersion]" sap:VirtualizedContainerService.HintSize="287,22" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces">
+      <sap:WorkflowViewStateService.ViewState>
+        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+          <x:Boolean x:Key="ShouldCollapseAll">False</x:Boolean>
+          <x:Boolean x:Key="ShouldExpandAll">True</x:Boolean>
+        </scg:Dictionary>
+      </sap:WorkflowViewStateService.ViewState>
+    </tva:UpdateAssemblyInfoFileVersion>-->
+  </Sequence>
+</Activity>

@@ -1,0 +1,863 @@
+﻿<Activity mc:Ignorable="sads sap sap2010" x:Class="TfsBuild.Versioning.Activities.VersionAssemblyInfoFiles" local:VersionAssemblyInfoFiles.VersionSeedFilePath="TfsVersion\VersionSeed.xml" local:VersionAssemblyInfoFiles.AssemblyInfoFilePattern="AssemblyInfo.*" local:VersionAssemblyInfoFiles.AssemblyVersionPattern="1.0.0.0" local:VersionAssemblyInfoFiles.DoCheckinAssemblyInfoFiles="False" local:VersionAssemblyInfoFiles.AssemblyFileVersionPattern="1.0.J.B" local:VersionAssemblyInfoFiles.ForceCreateVersion="False" local:VersionAssemblyInfoFiles.UseVersionSeedFile="False" local:VersionAssemblyInfoFiles.BuildNumberPrefix="0"
+ xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+ xmlns:local="clr-namespace:TfsBuild.Versioning.Activities"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:mtbc="clr-namespace:Microsoft.TeamFoundation.Build.Client;assembly=Microsoft.TeamFoundation.Build.Client"
+ xmlns:mtbwa="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Activities;assembly=Microsoft.TeamFoundation.Build.Workflow"
+ xmlns:mtbwt="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Tracking;assembly=Microsoft.TeamFoundation.Build.Workflow"
+ xmlns:mtvc="clr-namespace:Microsoft.TeamFoundation.VersionControl.Client;assembly=Microsoft.TeamFoundation.VersionControl.Client"
+ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+ xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
+ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+ xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+ xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+ xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+ xmlns:sl="clr-namespace:System.Linq;assembly=System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="VersionSeedFilePath" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyInfoFilePattern" Type="InArgument(x:String)">
+      <x:Property.Attributes>
+        <RequiredArgumentAttribute />
+      </x:Property.Attributes>
+    </x:Property>
+    <x:Property Name="AssemblyVersionPattern" Type="InArgument(x:String)" />
+    <x:Property Name="DoCheckinAssemblyInfoFiles" Type="InArgument(x:Boolean)">
+      <x:Property.Attributes>
+        <RequiredArgumentAttribute />
+      </x:Property.Attributes>
+    </x:Property>
+    <x:Property Name="AssemblyFileVersionPattern" Type="InArgument(x:String)" />
+    <x:Property Name="Workspace" Type="InArgument(mtvc:Workspace)">
+      <x:Property.Attributes>
+        <RequiredArgumentAttribute />
+      </x:Property.Attributes>
+    </x:Property>
+    <x:Property Name="ForceCreateVersion" Type="InArgument(x:Boolean)">
+      <x:Property.Attributes>
+        <RequiredArgumentAttribute />
+      </x:Property.Attributes>
+    </x:Property>
+    <x:Property Name="BuildSettings" Type="InArgument(mtbwa:BuildSettings)">
+      <x:Property.Attributes>
+        <RequiredArgumentAttribute />
+      </x:Property.Attributes>
+    </x:Property>
+    <x:Property Name="UseVersionSeedFile" Type="InArgument(x:Boolean)">
+      <x:Property.Attributes>
+        <RequiredArgumentAttribute />
+      </x:Property.Attributes>
+    </x:Property>
+    <x:Property Name="BuildNumberPrefix" Type="InArgument(x:Int32)" />
+    <x:Property Name="BuildDirectory" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyTitlePattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyDescriptionPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyConfigurationPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyCompanyPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyProductPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyCopyrightPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyTrademarkPattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyCulturePattern" Type="InArgument(x:String)" />
+    <x:Property Name="AssemblyInformationalVersionPattern" Type="InArgument(x:String)" />
+  </x:Members>
+  <mva:VisualBasic.Settings>
+    <x:Null />
+  </mva:VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>TfsBuild.Versioning.Activities.VersionAssemblyInfoFiles_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>Microsoft.TeamFoundation</x:String>
+      <x:String>Microsoft.TeamFoundation.Build.Client</x:String>
+      <x:String>Microsoft.TeamFoundation.Build.Workflow</x:String>
+      <x:String>Microsoft.TeamFoundation.Build.Workflow.Activities</x:String>
+      <x:String>Microsoft.TeamFoundation.Build.Workflow.Tracking</x:String>
+      <x:String>Microsoft.TeamFoundation.VersionControl.Client</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities.Debugger</x:String>
+      <x:String>System.ComponentModel</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Reflection</x:String>
+      <x:String>System.Text</x:String>
+      <x:String>System.Text.RegularExpressions</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>TfsBuild.Versioning.Activities</x:String>
+      <x:String>System.Activities.DurableInstancing</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.Common</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.Build.Client</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.Build.Workflow</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.VersionControl.Client</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>TfsBuild.Versioning.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Update Version Numbers" sap2010:WorkflowViewState.IdRef="Sequence_15" mtbwt:BuildTrackingParticipant.Importance="Low" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="AssemblyVersionReplacementPattern" />
+      <Variable x:TypeArguments="x:String" Name="AssemblyFileVersionReplacementPattern" />
+    </Sequence.Variables>
+    <Sequence DisplayName="Validate Arguments" sap2010:WorkflowViewState.IdRef="Sequence_1" mtbwt:BuildTrackingParticipant.Importance="Low">
+      <If Condition="[Workspace Is Nothing]" DisplayName="If Workspace Is Nothing" sap2010:WorkflowViewState.IdRef="If_1" mtbwt:BuildTrackingParticipant.Importance="Low">
+        <If.Then>
+          <Throw DisplayName="Throw ArgumentException" Exception="[New ArgumentNullException(&quot;Workspace&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_1" mtbwt:BuildTrackingParticipant.Importance="Low" />
+        </If.Then>
+      </If>
+      <If Condition="[BuildSettings Is Nothing]" DisplayName="If BuildSettings Is Nothing" sap2010:WorkflowViewState.IdRef="If_2" mtbwt:BuildTrackingParticipant.Importance="Low">
+        <If.Then>
+          <Throw DisplayName="Throw ArgumentException" Exception="[New ArgumentNullException(&quot;BuildSettings&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_2" mtbwt:BuildTrackingParticipant.Importance="Low" />
+        </If.Then>
+      </If>
+      <If Condition="[String.IsNullOrWhiteSpace(AssemblyInfoFilePattern)]" DisplayName="Validate AssemblyInfoFilePattern" sap2010:WorkflowViewState.IdRef="If_3" mtbwt:BuildTrackingParticipant.Importance="Low">
+        <If.Then>
+          <Throw DisplayName="Throw ArgumentException" Exception="[New ArgumentException(&quot;Please specify the search pattern for the AssemblyInfo files&quot;, &quot;AssemblyInfoFilePattern&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_3" mtbwt:BuildTrackingParticipant.Importance="Low" />
+        </If.Then>
+      </If>
+    </Sequence>
+    <Sequence DisplayName="Process Version Pattern Updates" sap2010:WorkflowViewState.IdRef="Sequence_14" mtbwt:BuildTrackingParticipant.Importance="Low">
+      <Sequence.Variables>
+        <Variable x:TypeArguments="mtbc:IBuildDetail" Name="BuildDetail" />
+      </Sequence.Variables>
+      <mtbwa:GetBuildDetail sap2010:WorkflowViewState.IdRef="GetBuildDetail_1" mtbwt:BuildTrackingParticipant.Importance="Low" Result="[BuildDetail]" />
+      <If Condition="[BuildSettings.HasProjectsToBuild]" DisplayName="Only do this IF there are projects (solutions) to build" sap2010:WorkflowViewState.IdRef="If_13" mtbwt:BuildTrackingParticipant.Importance="Low">
+        <If.Then>
+          <ForEach x:TypeArguments="x:String" DisplayName="ForEach&lt;String&gt;" sap2010:WorkflowViewState.IdRef="ForEach`1_2" mtbwt:BuildTrackingParticipant.Importance="Low" Values="[BuildSettings.ProjectsToBuild]">
+            <ActivityAction x:TypeArguments="x:String">
+              <ActivityAction.Argument>
+                <DelegateInArgument x:TypeArguments="x:String" Name="solution" />
+              </ActivityAction.Argument>
+              <Sequence DisplayName="Process each solution separately" sap2010:WorkflowViewState.IdRef="Sequence_13" mtbwt:BuildTrackingParticipant.Importance="Low">
+                <Sequence.Variables>
+                  <Variable x:TypeArguments="x:String" Name="SolutionPath" />
+                  <Variable x:TypeArguments="x:String" Name="AssemblyInfoFileSearchPattern" />
+                  <Variable x:TypeArguments="scg:IEnumerable(x:String)" Name="AssemblyInfoFileList" />
+                  <Variable x:TypeArguments="x:String" Name="PathToSolution" />
+                  <Variable x:TypeArguments="x:String" Name="AssemblyTitleReplacementPattern" />
+                  <Variable x:TypeArguments="x:String" Name="AssemblyDescriptionReplacementPattern" />
+                  <Variable x:TypeArguments="x:String" Name="AssemblyConfigurationReplacementPattern" />
+                  <Variable x:TypeArguments="x:String" Name="AssemblyCompanyReplacementPattern" />
+                  <Variable x:TypeArguments="x:String" Name="AssemblyProductReplacementPattern" />
+                  <Variable x:TypeArguments="x:String" Name="AssemblyCopyrightReplacementPattern" />
+                  <Variable x:TypeArguments="x:String" Name="AssemblyTrademarkReplacementPattern" />
+                  <Variable x:TypeArguments="x:String" Name="AssemblyCultureReplacementPattern" />
+                  <Variable x:TypeArguments="x:String" Name="AssemblyInformationalVersionReplacementPattern" />
+                </Sequence.Variables>
+                <mtbwa:ConvertWorkspaceItem sap2010:WorkflowViewState.IdRef="ConvertWorkspaceItem_1" mtbwt:BuildTrackingParticipant.Importance="Low" Input="[solution]" Result="[SolutionPath]" Workspace="[Workspace]" />
+                <Assign sap2010:WorkflowViewState.IdRef="Assign_1" mtbwt:BuildTrackingParticipant.Importance="Low">
+                  <Assign.To>
+                    <OutArgument x:TypeArguments="x:String">[PathToSolution]</OutArgument>
+                  </Assign.To>
+                  <Assign.Value>
+                    <InArgument x:TypeArguments="x:String">[Path.GetDirectoryName(SolutionPath)]</InArgument>
+                  </Assign.Value>
+                </Assign>
+                <If Condition="[UseVersionSeedFile]" sap2010:WorkflowViewState.IdRef="If_9" mtbwt:BuildTrackingParticipant.Importance="Low">
+                  <If.Then>
+                    <If Condition="[String.IsNullOrWhiteSpace(VersionSeedFilePath)]" DisplayName="Validate then process Seed File" sap2010:WorkflowViewState.IdRef="If_7" mtbwt:BuildTrackingParticipant.Importance="Low">
+                      <If.Then>
+                        <Throw Exception="[New ArgumentException(&quot;VersionSeedFilePath must contain the relative path to the Version Seed File&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_4" mtbwt:BuildTrackingParticipant.Importance="Low" />
+                      </If.Then>
+                      <If.Else>
+                        <Sequence sap2010:WorkflowViewState.IdRef="Sequence_8" mtbwt:BuildTrackingParticipant.Importance="Low">
+                          <Sequence.Variables>
+                            <Variable x:TypeArguments="x:String" Name="SolutionName" />
+                            <Variable x:TypeArguments="x:String" Name="FullPathToSeedFile" />
+                          </Sequence.Variables>
+                          <mtbwa:WriteBuildMessage sap2010:WorkflowViewState.IdRef="WriteBuildMessage_1" Importance="[Microsoft.TeamFoundation.Build.Client.BuildMessageImportance.High]" mtbwt:BuildTrackingParticipant.Importance="Low" Message="Assembly Version Processing: Using version number patterns included in seed file" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+                          <If Condition="[VersionSeedFilePath.StartsWith(&quot;$/&quot;)]" DisplayName="Is the VersionSeedFile in Source Control or part of existing workspace" sap2010:WorkflowViewState.IdRef="If_4">
+                            <If.Then>
+                              <Sequence DisplayName="Get the file from source and get the local filename" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                                <local:GetFile BuildDirectory="[BuildDirectory]" DisplayName="Get the seed file from source control" FileToGet="[VersionSeedFilePath]" FullPathToSeedFile="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="GetFile_1" Workspace="[Workspace]" />
+                                <mtbwa:WriteBuildMessage sap2010:WorkflowViewState.IdRef="WriteBuildMessage_2" Importance="[Microsoft.TeamFoundation.Build.Client.BuildMessageImportance.High]" Message="[String.Format(&quot;FullPathToSeedFile: {0}&quot;, FullPathToSeedFile)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+                              </Sequence>
+                            </If.Then>
+                            <If.Else>
+                              <Assign DisplayName="Create FullPathToSeedFile" sap2010:WorkflowViewState.IdRef="Assign_2" mtbwt:BuildTrackingParticipant.Importance="Low">
+                                <Assign.To>
+                                  <OutArgument x:TypeArguments="x:String">[FullPathToSeedFile]</OutArgument>
+                                </Assign.To>
+                                <Assign.Value>
+                                  <InArgument x:TypeArguments="x:String">[Path.Combine(PathToSolution, VersionSeedFilePath)]</InArgument>
+                                </Assign.Value>
+                              </Assign>
+                            </If.Else>
+                          </If>
+                          <If Condition="[Not System.IO.File.Exists(FullPathToSeedFile)]" sap2010:WorkflowViewState.IdRef="If_5" mtbwt:BuildTrackingParticipant.Importance="Low">
+                            <If.Then>
+                              <Throw Exception="[New ArgumentException(String.Format(&quot;Seed file: {0} could not be found.&quot;, FullPathToSeedFile))]" sap2010:WorkflowViewState.IdRef="Throw_5" mtbwt:BuildTrackingParticipant.Importance="Low" />
+                            </If.Then>
+                          </If>
+                          <Assign sap2010:WorkflowViewState.IdRef="Assign_3" mtbwt:BuildTrackingParticipant.Importance="Low">
+                            <Assign.To>
+                              <OutArgument x:TypeArguments="x:String">[SolutionName]</OutArgument>
+                            </Assign.To>
+                            <Assign.Value>
+                              <InArgument x:TypeArguments="x:String">[Path.GetFileNameWithoutExtension(solution)]</InArgument>
+                            </Assign.Value>
+                          </Assign>
+                          <Sequence DisplayName="Get Version Patterns for Solution Name from Seed File" sap2010:WorkflowViewState.IdRef="Sequence_6" mtbwt:BuildTrackingParticipant.Importance="Low">
+                            <Sequence DisplayName="Get AssemblyVersionPattern from Seed File" sap2010:WorkflowViewState.IdRef="Sequence_3" mtbwt:BuildTrackingParticipant.Importance="Low">
+                              <Sequence.Variables>
+                                <Variable x:TypeArguments="x:String" Name="AssemblyVersionXpathExpression" />
+                              </Sequence.Variables>
+                              <Assign DisplayName="Assign XPath expression for AssemblyVersion Seed" sap2010:WorkflowViewState.IdRef="Assign_4" mtbwt:BuildTrackingParticipant.Importance="Low">
+                                <Assign.To>
+                                  <OutArgument x:TypeArguments="x:String">[AssemblyVersionXpathExpression]</OutArgument>
+                                </Assign.To>
+                                <Assign.Value>
+                                  <InArgument x:TypeArguments="x:String">["/VersionSeed/Solution[@name='" + SolutionName + "']/AssemblyVersionPattern"]</InArgument>
+                                </Assign.Value>
+                              </Assign>
+                              <local:XmlExtract DisplayName="ExtractAssemblyVersionReplacementPattern" FilePath="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="XmlExtract_1" mtbwt:BuildTrackingParticipant.Importance="Low" NodeValue="[AssemblyVersionReplacementPattern]" XPathExpression="[AssemblyVersionXpathExpression]" />
+                            </Sequence>
+                            <Sequence DisplayName="Get AssemblyFileVersionPattern from Seed File" sap2010:WorkflowViewState.IdRef="Sequence_4" mtbwt:BuildTrackingParticipant.Importance="Low">
+                              <Sequence.Variables>
+                                <Variable x:TypeArguments="x:String" Name="AssemblyVersionXpathExpression" />
+                              </Sequence.Variables>
+                              <Assign DisplayName="Assign XPath expression for AssemblyFileVersion Seed" sap2010:WorkflowViewState.IdRef="Assign_5" mtbwt:BuildTrackingParticipant.Importance="Low">
+                                <Assign.To>
+                                  <OutArgument x:TypeArguments="x:String">[AssemblyVersionXpathExpression]</OutArgument>
+                                </Assign.To>
+                                <Assign.Value>
+                                  <InArgument x:TypeArguments="x:String">["/VersionSeed/Solution[@name='" + SolutionName + "']/AssemblyFileVersionPattern"]</InArgument>
+                                </Assign.Value>
+                              </Assign>
+                              <local:XmlExtract DisplayName="ExtractAssemblyFileVersionReplacementPattern" FilePath="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="XmlExtract_2" mtbwt:BuildTrackingParticipant.Importance="Low" NodeValue="[AssemblyFileVersionReplacementPattern]" XPathExpression="[AssemblyVersionXpathExpression]" />
+                            </Sequence>
+                            <Sequence DisplayName="Set all Assembly Property Values (a)" sap2010:WorkflowViewState.IdRef="Sequence_5">
+                              <Sequence.Variables>
+                                <Variable x:TypeArguments="x:String" Name="AssemblyPropertyXPathExpression" />
+                              </Sequence.Variables>
+                              <Assign DisplayName="AssemblyTitleReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_6">
+                                <Assign.To>
+                                  <OutArgument x:TypeArguments="x:String">[AssemblyPropertyXPathExpression]</OutArgument>
+                                </Assign.To>
+                                <Assign.Value>
+                                  <InArgument x:TypeArguments="x:String">[String.Format("/VersionSeed/Solution[@name='{0}']/AssemblyTitlePattern", SolutionName)]</InArgument>
+                                </Assign.Value>
+                              </Assign>
+                              <local:XmlExtract DisplayName="AssemblyTitleReplacementPattern" FilePath="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="XmlExtract_3" mtbwt:BuildTrackingParticipant.Importance="Low" NodeValue="[AssemblyTitleReplacementPattern]" XPathExpression="[AssemblyPropertyXPathExpression]" />
+                              <Assign DisplayName="AssemblyDescriptionReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_7">
+                                <Assign.To>
+                                  <OutArgument x:TypeArguments="x:String">[AssemblyPropertyXPathExpression]</OutArgument>
+                                </Assign.To>
+                                <Assign.Value>
+                                  <InArgument x:TypeArguments="x:String">[String.Format("/VersionSeed/Solution[@name='{0}']/AssemblyDescriptionPattern", SolutionName)]</InArgument>
+                                </Assign.Value>
+                              </Assign>
+                              <local:XmlExtract DisplayName="AssemblyDescriptionReplacementPattern" FilePath="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="XmlExtract_4" mtbwt:BuildTrackingParticipant.Importance="Low" NodeValue="[AssemblyDescriptionReplacementPattern]" XPathExpression="[AssemblyPropertyXPathExpression]" />
+                              <Assign DisplayName="AssemblyConfigurationReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_8">
+                                <Assign.To>
+                                  <OutArgument x:TypeArguments="x:String">[AssemblyPropertyXPathExpression]</OutArgument>
+                                </Assign.To>
+                                <Assign.Value>
+                                  <InArgument x:TypeArguments="x:String">[String.Format("/VersionSeed/Solution[@name='{0}']/AssemblyConfigurationPattern", SolutionName)]</InArgument>
+                                </Assign.Value>
+                              </Assign>
+                              <local:XmlExtract DisplayName="AssemblyConfigurationReplacementPattern" FilePath="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="XmlExtract_5" mtbwt:BuildTrackingParticipant.Importance="Low" NodeValue="[AssemblyConfigurationReplacementPattern]" XPathExpression="[AssemblyPropertyXPathExpression]" />
+                              <Assign DisplayName="AssemblyCompanyReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_9">
+                                <Assign.To>
+                                  <OutArgument x:TypeArguments="x:String">[AssemblyPropertyXPathExpression]</OutArgument>
+                                </Assign.To>
+                                <Assign.Value>
+                                  <InArgument x:TypeArguments="x:String">[String.Format("/VersionSeed/Solution[@name='{0}']/AssemblyCompanyPattern", SolutionName)]</InArgument>
+                                </Assign.Value>
+                              </Assign>
+                              <local:XmlExtract DisplayName="AssemblyCompanyReplacementPattern" FilePath="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="XmlExtract_6" mtbwt:BuildTrackingParticipant.Importance="Low" NodeValue="[AssemblyCompanyReplacementPattern]" XPathExpression="[AssemblyPropertyXPathExpression]" />
+                              <Assign DisplayName="AssemblyProductReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_10">
+                                <Assign.To>
+                                  <OutArgument x:TypeArguments="x:String">[AssemblyPropertyXPathExpression]</OutArgument>
+                                </Assign.To>
+                                <Assign.Value>
+                                  <InArgument x:TypeArguments="x:String">[String.Format("/VersionSeed/Solution[@name='{0}']/AssemblyProductPattern", SolutionName)]</InArgument>
+                                </Assign.Value>
+                              </Assign>
+                              <local:XmlExtract DisplayName="AssemblyProductReplacementPattern" FilePath="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="XmlExtract_7" mtbwt:BuildTrackingParticipant.Importance="Low" NodeValue="[AssemblyProductReplacementPattern]" XPathExpression="[AssemblyPropertyXPathExpression]" />
+                              <Assign DisplayName="AssemblyCopyrightReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_11">
+                                <Assign.To>
+                                  <OutArgument x:TypeArguments="x:String">[AssemblyPropertyXPathExpression]</OutArgument>
+                                </Assign.To>
+                                <Assign.Value>
+                                  <InArgument x:TypeArguments="x:String">[String.Format("/VersionSeed/Solution[@name='{0}']/AssemblyCopyrightPattern", SolutionName)]</InArgument>
+                                </Assign.Value>
+                              </Assign>
+                              <local:XmlExtract DisplayName="AssemblyCopyrightReplacementPattern" FilePath="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="XmlExtract_8" mtbwt:BuildTrackingParticipant.Importance="Low" NodeValue="[AssemblyCopyrightReplacementPattern]" XPathExpression="[AssemblyPropertyXPathExpression]" />
+                              <Assign DisplayName="AssemblyTrademarkReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_12">
+                                <Assign.To>
+                                  <OutArgument x:TypeArguments="x:String">[AssemblyPropertyXPathExpression]</OutArgument>
+                                </Assign.To>
+                                <Assign.Value>
+                                  <InArgument x:TypeArguments="x:String">[String.Format("/VersionSeed/Solution[@name='{0}']/AssemblyTrademarkPattern", SolutionName)]</InArgument>
+                                </Assign.Value>
+                              </Assign>
+                              <local:XmlExtract DisplayName="AssemblyTrademarkReplacementPattern" FilePath="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="XmlExtract_9" mtbwt:BuildTrackingParticipant.Importance="Low" NodeValue="[AssemblyTrademarkReplacementPattern]" XPathExpression="[AssemblyPropertyXPathExpression]" />
+                              <Assign DisplayName="AssemblyCultureReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_13">
+                                <Assign.To>
+                                  <OutArgument x:TypeArguments="x:String">[AssemblyPropertyXPathExpression]</OutArgument>
+                                </Assign.To>
+                                <Assign.Value>
+                                  <InArgument x:TypeArguments="x:String">[String.Format("/VersionSeed/Solution[@name='{0}']/AssemblyCulturePattern", SolutionName)]</InArgument>
+                                </Assign.Value>
+                              </Assign>
+                              <local:XmlExtract DisplayName="AssemblyCultureReplacementPattern" FilePath="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="XmlExtract_10" mtbwt:BuildTrackingParticipant.Importance="Low" NodeValue="[AssemblyCultureReplacementPattern]" XPathExpression="[AssemblyPropertyXPathExpression]" />
+                              <Assign DisplayName="AssemblyInformationalVersionReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_14">
+                                <Assign.To>
+                                  <OutArgument x:TypeArguments="x:String">[AssemblyPropertyXPathExpression]</OutArgument>
+                                </Assign.To>
+                                <Assign.Value>
+                                  <InArgument x:TypeArguments="x:String">[String.Format("/VersionSeed/Solution[@name='{0}']/AssemblyInformationalVersionPattern", SolutionName)]</InArgument>
+                                </Assign.Value>
+                              </Assign>
+                              <local:XmlExtract DisplayName="AssemblyInformationalVersionReplacementPattern" FilePath="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="XmlExtract_11" mtbwt:BuildTrackingParticipant.Importance="Low" NodeValue="[AssemblyInformationalVersionReplacementPattern]" XPathExpression="[AssemblyPropertyXPathExpression]" />
+                            </Sequence>
+                          </Sequence>
+                          <If Condition="[AssemblyVersionReplacementPattern = VersioningHelper.PropertyNotFound Or String.IsNullOrWhiteSpace(AssemblyVersionReplacementPattern)]" DisplayName="If Version Patterns not found for solution name then check Default" sap2010:WorkflowViewState.IdRef="If_6" mtbwt:BuildTrackingParticipant.Importance="Low">
+                            <If.Then>
+                              <Sequence sap2010:WorkflowViewState.IdRef="Sequence_7">
+                                <Sequence.Variables>
+                                  <Variable x:TypeArguments="x:String" Name="AssemblyVersionXpathExpression" />
+                                </Sequence.Variables>
+                                <Assign sap2010:WorkflowViewState.IdRef="Assign_15" mtbwt:BuildTrackingParticipant.Importance="Low">
+                                  <Assign.To>
+                                    <OutArgument x:TypeArguments="x:String">[AssemblyVersionXpathExpression]</OutArgument>
+                                  </Assign.To>
+                                  <Assign.Value>
+                                    <InArgument x:TypeArguments="x:String">["/VersionSeed/Solution[@name='Default']/AssemblyVersionPattern"]</InArgument>
+                                  </Assign.Value>
+                                </Assign>
+                                <local:XmlExtract DisplayName="Extract Default Replacement Pattern" FilePath="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="XmlExtract_12" mtbwt:BuildTrackingParticipant.Importance="Low" NodeValue="[AssemblyVersionReplacementPattern]" XPathExpression="[AssemblyVersionXpathExpression]" />
+                                <Assign sap2010:WorkflowViewState.IdRef="Assign_16" mtbwt:BuildTrackingParticipant.Importance="Low">
+                                  <Assign.To>
+                                    <OutArgument x:TypeArguments="x:String">[AssemblyVersionXpathExpression]</OutArgument>
+                                  </Assign.To>
+                                  <Assign.Value>
+                                    <InArgument x:TypeArguments="x:String">["/VersionSeed/Solution[@name='Default']/AssemblyFileVersionPattern"]</InArgument>
+                                  </Assign.Value>
+                                </Assign>
+                                <local:XmlExtract DisplayName="Extract Default Replacement Pattern" FilePath="[FullPathToSeedFile]" sap2010:WorkflowViewState.IdRef="XmlExtract_13" mtbwt:BuildTrackingParticipant.Importance="Low" NodeValue="[AssemblyFileVersionReplacementPattern]" XPathExpression="[AssemblyVersionXpathExpression]" />
+                              </Sequence>
+                            </If.Then>
+                          </If>
+                        </Sequence>
+                      </If.Else>
+                    </If>
+                  </If.Then>
+                  <If.Else>
+                    <If Condition="[String.IsNullOrWhiteSpace(AssemblyVersionPattern) Or String.IsNullOrWhiteSpace(AssemblyFileVersionPattern)]" DisplayName="Validate then process Build Definition Values" sap2010:WorkflowViewState.IdRef="If_8" mtbwt:BuildTrackingParticipant.Importance="Low">
+                      <If.Then>
+                        <Throw Exception="[New ArgumentException(&quot;AssemblyVersionPattern AND AssemblyFileVersionPattern must be filled in with valid version patterns&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_6" mtbwt:BuildTrackingParticipant.Importance="Low" />
+                      </If.Then>
+                      <If.Else>
+                        <Sequence sap2010:WorkflowViewState.IdRef="Sequence_11" mtbwt:BuildTrackingParticipant.Importance="Low">
+                          <Sequence DisplayName="AssemblyVersion and AssemblyFileVersion" sap2010:WorkflowViewState.IdRef="Sequence_9">
+                            <mtbwa:WriteBuildMessage sap2010:WorkflowViewState.IdRef="WriteBuildMessage_3" Importance="[Microsoft.TeamFoundation.Build.Client.BuildMessageImportance.High]" mtbwt:BuildTrackingParticipant.Importance="Low" Message="Assembly Version Processing: Using version number patterns included in build definition" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+                            <Assign DisplayName="Assign AssemblyVersionReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_17" mtbwt:BuildTrackingParticipant.Importance="Low">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:String">[AssemblyVersionReplacementPattern]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:String">[AssemblyVersionPattern]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                            <Assign DisplayName="Assign AssemblyVersionReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_18" mtbwt:BuildTrackingParticipant.Importance="Low">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:String">[AssemblyFileVersionReplacementPattern]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:String">[AssemblyFileVersionPattern]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                          </Sequence>
+                          <Sequence DisplayName="Set all Assembly Property Values (b)" sap2010:WorkflowViewState.IdRef="Sequence_10">
+                            <Assign DisplayName="AssemblyTitleReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_19" mtbwt:BuildTrackingParticipant.Importance="Low">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:String">[AssemblyTitleReplacementPattern]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:String">[AssemblyTitlePattern]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                            <Assign DisplayName="AssemblyDescriptionReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_20" mtbwt:BuildTrackingParticipant.Importance="Low">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:String">[AssemblyDescriptionReplacementPattern]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:String">[AssemblyDescriptionPattern]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                            <Assign DisplayName="AssemblyConfigurationReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_21" mtbwt:BuildTrackingParticipant.Importance="Low">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:String">[AssemblyConfigurationReplacementPattern]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:String">[AssemblyConfigurationPattern]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                            <Assign DisplayName="AssemblyCompanyReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_22" mtbwt:BuildTrackingParticipant.Importance="Low">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:String">[AssemblyCompanyReplacementPattern]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:String">[AssemblyCompanyPattern]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                            <Assign DisplayName="AssemblyProductReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_23" mtbwt:BuildTrackingParticipant.Importance="Low">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:String">[AssemblyProductReplacementPattern]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:String">[AssemblyProductPattern]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                            <Assign DisplayName="AssemblyCopyrightReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_24" mtbwt:BuildTrackingParticipant.Importance="Low">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:String">[AssemblyCopyrightReplacementPattern]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:String">[AssemblyCopyrightPattern]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                            <Assign DisplayName="AssemblyTrademarkReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_25" mtbwt:BuildTrackingParticipant.Importance="Low">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:String">[AssemblyTrademarkReplacementPattern]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:String">[AssemblyTrademarkPattern]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                            <Assign DisplayName="AssemblyCultureReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_26" mtbwt:BuildTrackingParticipant.Importance="Low">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:String">[AssemblyCultureReplacementPattern]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:String">[AssemblyCulturePattern]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                            <Assign DisplayName="AssemblyInformationalVersionReplacementPattern" sap2010:WorkflowViewState.IdRef="Assign_27" mtbwt:BuildTrackingParticipant.Importance="Low">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:String">[AssemblyInformationalVersionReplacementPattern]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:String">[AssemblyInformationalVersionPattern]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                          </Sequence>
+                        </Sequence>
+                      </If.Else>
+                    </If>
+                  </If.Else>
+                </If>
+                <mtbwa:WriteBuildMessage sap2010:WorkflowViewState.IdRef="WriteBuildMessage_4" Importance="[Microsoft.TeamFoundation.Build.Client.BuildMessageImportance.High]" mtbwt:BuildTrackingParticipant.Importance="Low" Message="[String.Format(&quot;Versioning assemblies with the following patterns: AssemblyVersion({0}) and AssemblyFileVersion({1})&quot;, AssemblyVersionReplacementPattern, AssemblyFileVersionReplacementPattern)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+                <Assign sap2010:WorkflowViewState.IdRef="Assign_28" mtbwt:BuildTrackingParticipant.Importance="Low">
+                  <Assign.To>
+                    <OutArgument x:TypeArguments="x:String">[AssemblyInfoFileSearchPattern]</OutArgument>
+                  </Assign.To>
+                  <Assign.Value>
+                    <InArgument x:TypeArguments="x:String">[Path.Combine(Path.GetDirectoryName(SolutionPath), "**", AssemblyInfoFilePattern)]</InArgument>
+                  </Assign.Value>
+                </Assign>
+                <mtbwa:FindMatchingFiles sap2010:WorkflowViewState.IdRef="FindMatchingFiles_1" mtbwt:BuildTrackingParticipant.Importance="Low" MatchPattern="[AssemblyInfoFileSearchPattern]" Result="[AssemblyInfoFileList]" />
+                <If Condition="[DoCheckinAssemblyInfoFiles]" DisplayName="Check out the AssemblyInfo files if necessary" sap2010:WorkflowViewState.IdRef="If_11" mtbwt:BuildTrackingParticipant.Importance="Low">
+                  <If.Then>
+                    <Sequence DisplayName="Check out AssemblyInfo files in solution" sap2010:WorkflowViewState.IdRef="Sequence_12" mtbwt:BuildTrackingParticipant.Importance="Low">
+                      <If Condition="[AssemblyInfoFileList.Any()]" DisplayName="If assembly info files were found" sap2010:WorkflowViewState.IdRef="If_10" mtbwt:BuildTrackingParticipant.Importance="Low">
+                        <If.Then>
+                          <ForEach x:TypeArguments="x:String" DisplayName="Check out each file to be modified" sap2010:WorkflowViewState.IdRef="ForEach`1_1" mtbwt:BuildTrackingParticipant.Importance="Low" Values="[AssemblyInfoFileList]">
+                            <ActivityAction x:TypeArguments="x:String">
+                              <ActivityAction.Argument>
+                                <DelegateInArgument x:TypeArguments="x:String" Name="assemblyInfoFile" />
+                              </ActivityAction.Argument>
+                              <local:CheckOutFile FileToCheckOut="[assemblyInfoFile]" sap2010:WorkflowViewState.IdRef="CheckOutFile_1" mtbwt:BuildTrackingParticipant.Importance="Low" Workspace="[Workspace]" />
+                            </ActivityAction>
+                          </ForEach>
+                        </If.Then>
+                      </If>
+                    </Sequence>
+                  </If.Then>
+                </If>
+                <local:UpdateAssemblyInfoFileVersion AssemblyCompanyReplacementPattern="[AssemblyCompanyReplacementPattern]" AssemblyConfigurationReplacementPattern="[AssemblyConfigurationReplacementPattern]" AssemblyCopyrightReplacementPattern="[AssemblyCopyrightReplacementPattern]" AssemblyCultureReplacementPattern="[AssemblyCultureReplacementPattern]" AssemblyDescriptionReplacementPattern="[AssemblyDescriptionReplacementPattern]" AssemblyFileVersionReplacementPattern="[AssemblyFileVersionReplacementPattern]" AssemblyInfoFileList="[AssemblyInfoFileList]" AssemblyInformationalVersionReplacementPattern="[AssemblyInformationalVersionReplacementPattern]" AssemblyProductReplacementPattern="[AssemblyProductReplacementPattern]" AssemblyTitleReplacementPattern="[AssemblyTitleReplacementPattern]" AssemblyTrademarkReplacementPattern="[AssemblyTrademarkReplacementPattern]" AssemblyVersionReplacementPattern="[AssemblyVersionReplacementPattern]" BuildNumber="[BuildDetail.BuildNumber]" BuildNumberPrefix="[BuildNumberPrefix]" ForceCreateVersion="[ForceCreateVersion]" sap2010:WorkflowViewState.IdRef="TfsBuild.Versioning.Activities.UpdateAssemblyInfoFileVersion_1" mtbwt:BuildTrackingParticipant.Importance="Low" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces">
+                  <sap2010:WorkflowViewState.ViewStateManager>
+                    <sap2010:ViewStateManager>
+                      <sap2010:ViewStateData Id="WriteBuildMessage_1" sap2010:WorkflowViewState.IdRef="ViewStateData_1" />
+                      <sap2010:ViewStateData Id="ConvertVersionPattern_1" sap2010:WorkflowViewState.IdRef="ViewStateData_2" />
+                      <sap2010:ViewStateData Id="ReplaceVersionInFile_1" sap2010:WorkflowViewState.IdRef="ViewStateData_3" />
+                      <sap2010:ViewStateData Id="Sequence_1" sap2010:WorkflowViewState.IdRef="ViewStateData_4" />
+                      <sap2010:ViewStateData Id="If_1" sap2010:WorkflowViewState.IdRef="ViewStateData_5" />
+                      <sap2010:ViewStateData Id="ConvertVersionPattern_2" sap2010:WorkflowViewState.IdRef="ViewStateData_6" />
+                      <sap2010:ViewStateData Id="ReplaceVersionInFile_2" sap2010:WorkflowViewState.IdRef="ViewStateData_7" />
+                      <sap2010:ViewStateData Id="Sequence_2" sap2010:WorkflowViewState.IdRef="ViewStateData_8" />
+                      <sap2010:ViewStateData Id="If_2" sap2010:WorkflowViewState.IdRef="ViewStateData_9" />
+                      <sap2010:ViewStateData Id="GetBuildDetail_1" sap2010:WorkflowViewState.IdRef="ViewStateData_10" />
+                      <sap2010:ViewStateData Id="ReplaceAssemblyInfoProperties_1" sap2010:WorkflowViewState.IdRef="ViewStateData_11" />
+                      <sap2010:ViewStateData Id="Sequence_3" sap2010:WorkflowViewState.IdRef="ViewStateData_12" />
+                      <sap2010:ViewStateData Id="ForEach`1_1" sap2010:WorkflowViewState.IdRef="ViewStateData_13" />
+                      <sap2010:ViewStateData Id="Sequence_4" sap2010:WorkflowViewState.IdRef="ViewStateData_14" />
+                      <sap2010:ViewStateData Id="WriteBuildWarning_1" sap2010:WorkflowViewState.IdRef="ViewStateData_15" />
+                      <sap2010:ViewStateData Id="If_3" sap2010:WorkflowViewState.IdRef="ViewStateData_16" />
+                      <sap2010:ViewStateData Id="Sequence_5" sap2010:WorkflowViewState.IdRef="ViewStateData_17" />
+                      <sap2010:ViewStateData Id="TfsBuild.Versioning.Activities.UpdateAssemblyInfoFileVersion_1" sap2010:WorkflowViewState.IdRef="ViewStateData_18" />
+                    </sap2010:ViewStateManager>
+                  </sap2010:WorkflowViewState.ViewStateManager>
+                </local:UpdateAssemblyInfoFileVersion>
+                <If Condition="[DoCheckinAssemblyInfoFiles]" DisplayName="Check in the AssemblyInfo files if they were checked out" sap2010:WorkflowViewState.IdRef="If_12" mtbwt:BuildTrackingParticipant.Importance="Low">
+                  <If.Then>
+                    <local:CheckInFiles sap2010:WorkflowViewState.IdRef="CheckInFiles_1" mtbwt:BuildTrackingParticipant.Importance="Low" Workspace="[Workspace]" />
+                  </If.Then>
+                </If>
+              </Sequence>
+            </ActivityAction>
+          </ForEach>
+        </If.Then>
+      </If>
+    </Sequence>
+    <sads:DebugSymbol.Symbol>d44BQzpcX1Rmc1Byb2plY3RzVlMyMDEyXEJ1aWxkQWN0aXZpdGllc1xTb2x1dGlvbkJ1aWxkVmVyc2lvbmluZ1xEZXZcVmVyc2lvbiAyLjAuMC4wXFRmc0J1aWxkLlZlcnNpb25pbmcuQWN0aXZpdGllc1xWZXJzaW9uQXNzZW1ibHlJbmZvRmlsZXMueGFtbPgBAf8CAYUDAQkBwQMByQMBCAGgAQG7AQEHAbcEAb0EAQYB8AQB8gQBBQG7AgHDAgEEAf0DAYMEAQMB9AEBgwIBAnoDnQQOAgEBfwWPARADAeQCkAEFmwQQAgECgAEHhAEMAwHuAoUBB4kBDAMB6gKKAQeOAQwDAeUClAEHlAGZAQMB4QKVAQeaBAwCAQOAARWAAS0DAe8CggELggHTAQMB8AKFARWFATEDAesChwELhwHXAQMB7AKKARWKAUsDAeYCjAELjAGnAgMB6AKUAYcBlAGWAQMB4gKVARWVATkCAQSXAQuYBBUCAQWCAUKCAXYDAfEChwFChwF6AwHtAowBQowBygEDAekClwG4AZcB2QEDAeACnAEPlgQaAgEGrAERrAHbAQMB2QKtARG0ARoDAdUCtQER3AMWAgFH3QMR3QOdBAIBQt4DEeUDGgIBPuYDEeYD4QECATnnAxH4AxYCASv5AxGQBDcCAQ2RBBGVBBYCAQesAZwBrAGoAQMB3gKsAbABrAHAAQMB3AKsAcsBrAHYAQMB2gKyATyyAWEDAdgCrwE9rwFNAwHWArUBH7UBNQIBSLcBFfICGgMBjQH1AhXaAxoCAUrdA+kB3QO2AwIBRN0Da90DsAECAUPjAzzjA44BAgFB4AM94ANcAgE/5gOdAeYDvgECATzmA8YB5gPeAQIBOucDH+cDPQIBLOkDFfYDIAIBLvkDmwT5A7MEAgEp+QP+BfkDoQYCASf5A/YB+QOdAgIBJfkDpgH5A9EBAgEj+QO4BfkD3QUCASH5A8YG+QPtBgIBH/kD8Af5A4UIAgEd+QPcA/kDhQQCARv5A8IH+QPdBwIBGvkDjAP5A7UDAgEY+QNY+QN9AgEW+QPjBPkDlQUCART5A5kI+QOvCAIBEvkDwAL5A+UCAgEQ+QOQB/kDtQcCAQ6RBB+RBD0CAQiTBBWTBKQBAgEKtwEjtwFVAwGOAbkBGbkB+QEDAdMCvAEZ8AIkAwGQAfUCI/UCkQECAUv3Ahn3ApECAwGLAfoCGdgDJAIBTuoDF/UDHAIBL5MElAGTBKEBAgELuQEquQGcAQMB1ALBARvBAawDAwHQAsIBG9MBIAMBuwLUARvYASADAbYC2QEb4AEkAwGyAuEBG9QCJgMBqgHVAhvvAiADAZEB9wIq9wK0AQMBjAH7AhuNAyYCAX2OAxvXAyYCAU/qAyXqA0MCATDsAxvzAyUCATHBAfMBwQHFAgMB0gLBAXXBAboBAwHRAsIBKcIBWwMBvALEAR/HASoDAcICygEf0QEoAwG+AtQBKdQBWgMBtwLWAR/WAfkBAwG5At4BRt4BcgMBtQLbAUfbAVUDAbMC4gEd7wEoAwGlAvABHf0BKAMBmAL+AR3TAigDAasB1QIp1QKyAQMBkgHXAh/tAioDAZMB/AId/AK1AwMBiAH9Ah2EAyYDAYMBhQMdjAMmAgF+jwMdlgMmAgF4lwMdngMmAgFznwMdpgMmAgFupwMdrgMmAgFprwMdtgMmAgFktwMdvgMmAgFfvwMdxgMmAgFaxwMdzgMmAgFVzwMd1gMmAgFQ7APVAewD7QECATfxAx/xA9IBAgEyxQEhxQGYAgMBxwLGASHGAfoCAwHDAs8BSs8BfQMBwQLMAUvMAV8DAb8C1gEw1gGcAQMBugLmAR/tASgDAa0C7gEf7gHMAgMBpgL0AR/7ASgDAaAC/AEf/AHUAgMBmQKCAh+JAigDAZMCigIfigLCAgMBjAKLAh+SAigDAYcCkwIfkwLOAgMBgAKUAh+bAigDAfsBnAIfnALSAgMB9AGdAh+kAigDAe8BpQIfpQLGAgMB6AGmAh+tAigDAeMBrgIfrgLGAgMB3AGvAh+2AigDAdcBtwIftwLKAgMB0AG4Ah+/AigDAcsBwAIfwALKAgMBxAHBAh/IAigDAb8ByQIfyQLHAgMBuAHKAh/RAigDAbMB0gIf0gLhAgMBrAHbAiHiAioDAaYB4wIh4wLKAgMBnwHkAiHrAioDAZsB7AIh7ALOAgMBlAH8AvUB/ALOAgMBigH8Anf8ArwBAwGJAYIDSIIDYAMBhgH/Akn/AmwDAYQBigNIigNkAwGBAYcDSYcDcAIBf5QDSJQDXgIBe5EDSZEDagIBeZwDSJwDZAIBdpkDSZkDcAIBdKQDSKQDZgIBcaEDSaEDcgIBb6wDSKwDYAIBbKkDSakDbAIBarQDSLQDYAIBZ7EDSbEDbAIBZbwDSLwDYgIBYrkDSbkDbgIBYMQDSMQDYgIBXcEDScEDbgIBW8wDSMwDYAIBWMkDSckDbAIBVtQDSNQDbQIBU9EDSdEDeQIBUfEDQvEDVgIBNfEDwgHxA88BAgEzxQGQAcUBpwEDAc4CxQG7AcUB0QEDAcwCxQE/xQFRAwHKAsUBiALFAZUCAwHIAsYByQHGAZMCAwHFAsYBe8YBwAEDAcQC6wFK6wGYAQMBsALoAUvoAWsDAa4C7gHxAe4BlgIDAasC7gGnAu4ByQIDAakC7gFx7gGHAQMBpwL5AUr5AZwBAwGjAvYBS/YBawMBoQL8AfUB/AGeAgMBngL8Aa8C/AHRAgMBnAL8AXX8AYsBAwGaAocCSocCogEDAZYChAJLhAJsAwGUAooC6AGKAosCAwGRAooCnAKKAr8CAwGPAooCaIoCfgMBjQKQAkqQAqgBAwGKAo0CS40CbAMBiAKTAu4BkwKXAgMBhQKTAqgCkwLLAgMBgwKTAm6TAoQBAwGBApkCSpkCqgEDAf4BlgJLlgJsAwH8AZwC8AGcApsCAwH5AZwCrAKcAs8CAwH3AZwCcJwChgEDAfUBogJKogKkAQMB8gGfAkufAmwDAfABpQLqAaUCjwIDAe0BpQKgAqUCwwIDAesBpQJqpQKAAQMB6QGrAkqrAqQBAwHmAagCS6gCbAMB5AGuAuoBrgKPAgMB4QGuAqACrgLDAgMB3wGuAmquAoABAwHdAbQCSrQCpgEDAdoBsQJLsQJsAwHYAbcC7AG3ApMCAwHVAbcCpAK3AscCAwHTAbcCbLcCggEDAdEBvQJKvQKmAQMBzgG6Aku6AmwDAcwBwALsAcACkwIDAckBwAKkAsACxwIDAccBwAJswAKCAQMBxQHGAkrGAqQBAwHCAcMCS8MCbAMBwAHJAusByQKQAgMBvQHJAqECyQLEAgMBuwHJAmrJAoABAwG5Ac8CSs8CsQEDAbYBzAJLzAJsAwG0AdIC+AHSAqoCAwGxAdICuwLSAt4CAwGvAdICd9ICjQEDAa0B4AJM4AKNAQMBqQHdAk3dAm0DAacB4wLvAeMClAIDAaQB4wKlAuMCxwIDAaIB4wJu4wKEAQMBoAHpAkzpApEBAwGeAeYCTeYCbQMBnAHsAu8B7AKYAgMBmQHsAqkC7ALLAgMBlwHsAm7sAoQBAwGVAQ==</sads:DebugSymbol.Symbol>
+  </Sequence>
+  <sap2010:WorkflowViewState.ViewStateManager>
+    <sap2010:ViewStateManager>
+      <sap2010:ViewStateData Id="Throw_1" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="If_1" sap:VirtualizedContainerService.HintSize="464,208">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Throw_2" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="If_2" sap:VirtualizedContainerService.HintSize="464,208">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Throw_3" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="If_3" sap:VirtualizedContainerService.HintSize="464,208">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_1" sap:VirtualizedContainerService.HintSize="1471,828">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="GetBuildDetail_1" sap:VirtualizedContainerService.HintSize="1449,22" />
+      <sap2010:ViewStateData Id="ConvertWorkspaceItem_1" sap:VirtualizedContainerService.HintSize="1272,22" />
+      <sap2010:ViewStateData Id="Assign_1" sap:VirtualizedContainerService.HintSize="1272,60" />
+      <sap2010:ViewStateData Id="Throw_4" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="WriteBuildMessage_1" sap:VirtualizedContainerService.HintSize="489,22" />
+      <sap2010:ViewStateData Id="GetFile_1" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="WriteBuildMessage_2" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="Sequence_2" sap:VirtualizedContainerService.HintSize="222,208">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_2" sap:VirtualizedContainerService.HintSize="242,60" />
+      <sap2010:ViewStateData Id="If_4" sap:VirtualizedContainerService.HintSize="489,356" />
+      <sap2010:ViewStateData Id="Throw_5" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="If_5" sap:VirtualizedContainerService.HintSize="489,208" />
+      <sap2010:ViewStateData Id="Assign_3" sap:VirtualizedContainerService.HintSize="489,60" />
+      <sap2010:ViewStateData Id="Assign_4" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="XmlExtract_1" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Sequence_3" sap:VirtualizedContainerService.HintSize="264,244">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_5" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="XmlExtract_2" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Sequence_4" sap:VirtualizedContainerService.HintSize="264,244">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_6" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="XmlExtract_3" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Assign_7" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="XmlExtract_4" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Assign_8" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="XmlExtract_5" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Assign_9" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="XmlExtract_6" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Assign_10" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="XmlExtract_7" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Assign_11" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="XmlExtract_8" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Assign_12" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="XmlExtract_9" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Assign_13" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="XmlExtract_10" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Assign_14" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="XmlExtract_11" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Sequence_5" sap:VirtualizedContainerService.HintSize="264,1524">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_6" sap:VirtualizedContainerService.HintSize="489,2216">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_15" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="XmlExtract_12" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Assign_16" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="XmlExtract_13" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Sequence_7" sap:VirtualizedContainerService.HintSize="301,404">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="If_6" sap:VirtualizedContainerService.HintSize="489,510">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_8" sap:VirtualizedContainerService.HintSize="511,3696">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="If_7" sap:VirtualizedContainerService.HintSize="736,3844">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Throw_6" sap:VirtualizedContainerService.HintSize="200,1472" />
+      <sap2010:ViewStateData Id="WriteBuildMessage_3" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Assign_17" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="Assign_18" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="Sequence_9" sap:VirtualizedContainerService.HintSize="264,342">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_19" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="Assign_20" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="Assign_21" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="Assign_22" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="Assign_23" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="Assign_24" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="Assign_25" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="Assign_26" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="Assign_27" sap:VirtualizedContainerService.HintSize="242,58" />
+      <sap2010:ViewStateData Id="Sequence_10" sap:VirtualizedContainerService.HintSize="264,966">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_11" sap:VirtualizedContainerService.HintSize="286,1472">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="If_8" sap:VirtualizedContainerService.HintSize="511,1620">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="If_9" sap:VirtualizedContainerService.HintSize="1272,3992">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="WriteBuildMessage_4" sap:VirtualizedContainerService.HintSize="1272,22" />
+      <sap2010:ViewStateData Id="Assign_28" sap:VirtualizedContainerService.HintSize="1272,58" />
+      <sap2010:ViewStateData Id="FindMatchingFiles_1" sap:VirtualizedContainerService.HintSize="1272,22" />
+      <sap2010:ViewStateData Id="CheckOutFile_1" sap:VirtualizedContainerService.HintSize="257,100" />
+      <sap2010:ViewStateData Id="ForEach`1_1" sap:VirtualizedContainerService.HintSize="313,206" />
+      <sap2010:ViewStateData Id="If_10" sap:VirtualizedContainerService.HintSize="464,312" />
+      <sap2010:ViewStateData Id="Sequence_12" sap:VirtualizedContainerService.HintSize="486,436">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="If_11" sap:VirtualizedContainerService.HintSize="1272,542" />
+      <sap2010:ViewStateData Id="ViewStateData_1" sap:VirtualizedContainerService.HintSize="464,22" />
+      <sap2010:ViewStateData Id="ViewStateData_2" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_3" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_4" sap:VirtualizedContainerService.HintSize="222,208">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_5" sap:VirtualizedContainerService.HintSize="464,356" />
+      <sap2010:ViewStateData Id="ViewStateData_6" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_7" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_8" sap:VirtualizedContainerService.HintSize="222,208">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_9" sap:VirtualizedContainerService.HintSize="464,356" />
+      <sap2010:ViewStateData Id="ViewStateData_10" sap:VirtualizedContainerService.HintSize="464,22" />
+      <sap2010:ViewStateData Id="ViewStateData_11" sap:VirtualizedContainerService.HintSize="464,22" />
+      <sap2010:ViewStateData Id="ViewStateData_12" sap:VirtualizedContainerService.HintSize="486,1062">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_13" sap:VirtualizedContainerService.HintSize="516,1210" />
+      <sap2010:ViewStateData Id="ViewStateData_14" sap:VirtualizedContainerService.HintSize="538,1334">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_15" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_16" sap:VirtualizedContainerService.HintSize="763,1482">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_17" sap:VirtualizedContainerService.HintSize="785,1606">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_18" sap:VirtualizedContainerService.HintSize="825,1686">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="ShouldCollapseAll">False</x:Boolean>
+            <x:Boolean x:Key="ShouldExpandAll">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="TfsBuild.Versioning.Activities.UpdateAssemblyInfoFileVersion_1" sap:VirtualizedContainerService.HintSize="1272,22">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="ShouldCollapseAll">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="CheckInFiles_1" sap:VirtualizedContainerService.HintSize="269,100" />
+      <sap2010:ViewStateData Id="If_12" sap:VirtualizedContainerService.HintSize="1272,206" />
+      <sap2010:ViewStateData Id="Sequence_13" sap:VirtualizedContainerService.HintSize="1294,5390">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ForEach`1_2" sap:VirtualizedContainerService.HintSize="1324,5538" />
+      <sap2010:ViewStateData Id="If_13" sap:VirtualizedContainerService.HintSize="1449,5686">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_14" sap:VirtualizedContainerService.HintSize="1471,5872">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_15" sap:VirtualizedContainerService.HintSize="1493,6864">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="TfsBuild.Versioning.Activities.VersionAssemblyInfoFiles_1" sap:VirtualizedContainerService.HintSize="1533,6944">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="ShouldCollapseAll">False</x:Boolean>
+            <x:Boolean x:Key="ShouldExpandAll">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+    </sap2010:ViewStateManager>
+  </sap2010:WorkflowViewState.ViewStateManager>
+</Activity>
