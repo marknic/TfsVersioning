@@ -52,7 +52,7 @@ namespace TfsBuild.Versioning.Activities
 
                 // Need to check in the files without initiating a CI build: Passing on "***NO_CI***" as a comment does this
                 //  see: http://blogs.msdn.com/b/buckh/archive/2007/07/27/tfs-2008-how-to-check-in-without-triggering-a-build-when-using-continuous-integration.aspx
-                workspace.CheckIn(workspace.GetPendingChanges(), "Versioning Build Process", "***NO_CI***", null, null,
+                workspace.CheckIn(workspace.GetPendingChanges(), null, "***NO_CI***", null, null,
                                   new PolicyOverrideInfo(
                                       "Checking in modified AssemblyInfo files as part of Versioning Build Process",
                                       null), CheckinOptions.SuppressEvent);

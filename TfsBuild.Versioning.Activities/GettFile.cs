@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Activities;
 using System.IO;
 using Microsoft.TeamFoundation.Build.Client;
@@ -64,34 +65,49 @@ namespace TfsBuild.Versioning.Activities
             var filename = Path.GetFileName(fileToGet);
             var fullPathToSeedFile = Path.Combine(versionFileDirectory, filename);
 
-            // Write to the log
-            context.WriteBuildMessage(string.Format("Getting file from Source: {0}", fileToGet), BuildMessageImportance.High);
-            context.WriteBuildMessage(string.Format("Placing version seed file in: {0}", versionFileDirectory), BuildMessageImportance.High);
-
-            // Create workspace and working folder
-            var tempWorkspace = workspace.VersionControlServer.CreateWorkspace("VersionSeed");
-            var workingFolder = new WorkingFolder(fileToGet, fullPathToSeedFile);
-
-            // Map the workspace
-            tempWorkspace.CreateMapping(workingFolder);
-
-            // Get the file
-            var request = new GetRequest(new ItemSpec(fileToGet, RecursionType.None), VersionSpec.Latest);
-            var status = tempWorkspace.Get(request, GetOptions.GetAll | GetOptions.Overwrite); 
-
-            if (!status.NoActionNeeded)
-            {
-                foreach (var failure in status.GetFailures())
-                {
-                    context.WriteBuildMessage(string.Format("Failed to get file from source: {0} - {1}", fileToGet, failure.GetFormattedMessage()), BuildMessageImportance.High);
-                }    
-            }
-
             // Return the value back to the workflow
             context.SetValue(FullPathToSeedFile, fullPathToSeedFile);
 
-            // Get rid of the workspace
-            tempWorkspace.Delete();
+            // Write to the log
+            context.WriteBuildMessage(string.Format("Getting file from Source: {0}", fileToGet),
+                                      BuildMessageImportance.High);
+            context.WriteBuildMessage(string.Format("Placing version seed file in: {0}", versionFileDirectory),
+                                      BuildMessageImportance.High);
+
+            try
+            {
+                // Create workspace and working folder
+                var tempWorkspace = workspace.VersionControlServer.CreateWorkspace("VersionSeed");
+                var workingFolder = new WorkingFolder(fileToGet, fullPathToSeedFile);
+
+                // Map the workspace
+                tempWorkspace.CreateMapping(workingFolder);
+
+                // Get the file
+                var request = new GetRequest(new ItemSpec(fileToGet, RecursionType.None), VersionSpec.Latest);
+                var status = tempWorkspace.Get(request, GetOptions.GetAll | GetOptions.Overwrite);
+
+                if (!status.NoActionNeeded)
+                {
+                    foreach (var failure in status.GetFailures())
+                    {
+                        context.WriteBuildMessage(
+                            string.Format("Failed to get file from source: {0} - {1}", fileToGet,
+                                          failure.GetFormattedMessage()), BuildMessageImportance.High);
+                    }
+                }
+
+                // Return the value back to the workflow
+                context.SetValue(FullPathToSeedFile, fullPathToSeedFile);
+
+                // Get rid of the workspace
+                tempWorkspace.Delete();
+            }
+            catch (Exception)
+            {
+                context.WriteBuildMessage(string.Format("Seed file exists in '{0}'. Using existing file.", versionFileDirectory),
+                    BuildMessageImportance.High);
+            }
         }
     }
 }

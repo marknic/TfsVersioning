@@ -253,6 +253,8 @@ namespace TfsBuild.Versioning.Activities.Tests.Stubs
             get { throw new NotImplementedException(); }
         }
 
+        public List<IBuildDefinitionSourceProvider> SourceProviders { get; private set; }
+
         IWorkspaceTemplate IBuildDefinition.Workspace
         {
             get { throw new NotImplementedException(); }

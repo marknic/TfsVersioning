@@ -1,4 +1,4 @@
-<VersionSeed>
+﻿<VersionSeed>
   <!-- ============================================================================================================================== -->
   <!-- Updated: 7/2011 for Version 2.0.0.0                                                                                            -->
   <!-- Options:                                                                                                                       -->
@@ -18,7 +18,7 @@
   <!--                                                                                                                                -->
   <!-- ============================================================================================================================== -->
   <Solution name="BuildVersioning">
-    <AssemblyVersionPattern>2.0.0.0</AssemblyVersionPattern>
+    <AssemblyVersionPattern>2.0.1.0</AssemblyVersionPattern>
     <AssemblyFileVersionPattern>2.0.j.b</AssemblyFileVersionPattern>
     <AssemblyTitlePattern>TfsVersioning Custom Build Activity v2.0 built on $SDATE</AssemblyTitlePattern>
     <AssemblyInformationalVersionPattern>Built $BNAME on $UTIME by $REQBY</AssemblyInformationalVersionPattern>
