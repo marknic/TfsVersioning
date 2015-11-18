@@ -7,6 +7,7 @@ using System.Text;
 using System.Activities;
 using System.Text.RegularExpressions;
 using Microsoft.TeamFoundation.Build.Client;
+using Microsoft.TeamFoundation.VersionControl.Client;
 
 // ==============================================================================================
 // http://tfsversioning.codeplex.com/
@@ -41,6 +42,9 @@ namespace TfsBuild.Versioning.Activities
 
         [RequiredArgument]
         public InArgument<IBuildDetail> BuildDetail { get; set; }
+        
+        [RequiredArgument]
+        public InArgument<Workspace> Workspace { get; set; }
 
         // Assembly properties
         public InArgument<string> AssemblyTitle { get; set; }
@@ -52,7 +56,7 @@ namespace TfsBuild.Versioning.Activities
         public InArgument<string> AssemblyTrademark { get; set; }
         public InArgument<string> AssemblyCulture { get; set; }
         public InArgument<string> AssemblyInformationalVersion { get; set; }
-
+        
         #endregion
 
         /// <summary>
@@ -64,8 +68,10 @@ namespace TfsBuild.Versioning.Activities
             // Obtain the runtime value of the Text input argument
             var filePath = context.GetValue(FilePath);
             var forceCreate = context.GetValue(ForceCreate);
-            IBuildDetail buildDetail = context.GetValue(BuildDetail);
-            DateTime buildDate = context.GetValue(BuildDate);
+            var buildDetail = context.GetValue(BuildDetail);
+            var buildDate = context.GetValue(BuildDate);
+            var workspace = context.GetValue(Workspace);
+            var buildAgent = context.GetExtension<IBuildAgent>();
     
             #region Validate Arguments
 
@@ -101,7 +107,7 @@ namespace TfsBuild.Versioning.Activities
             var projectType = VersioningHelper.GetProjectTypeFromFileName(filePath);
 
             // Perform the update of the assembly info values based on the list created above
-            UpdateAssemblyValues(filePath, assemblyInfoProperties, buildDetail, buildDate, projectType, forceCreate);
+            UpdateAssemblyValues(filePath, assemblyInfoProperties, buildDetail, buildDate, projectType, forceCreate, workspace, buildAgent);
         }
 
         /// <summary>
@@ -114,7 +120,7 @@ namespace TfsBuild.Versioning.Activities
         /// <param name="projectType">Type of project (cs, vb, cpp or fs)</param>
         /// <param name="forceCreate">If the value isn't in the AssemblyInfo file do we insert it anyway</param>
         public void UpdateAssemblyValues(string filePath, IList<KeyValuePair<string, string>> assemblyInfoProperties, 
-            IBuildDetail buildDetail, DateTime buildDate, ProjectTypes projectType, bool forceCreate)
+            IBuildDetail buildDetail, DateTime buildDate, ProjectTypes projectType, bool forceCreate, Workspace workspace, IBuildAgent buildAgent)
         {
             var newFileData = new StringBuilder();
 
@@ -135,7 +141,7 @@ namespace TfsBuild.Versioning.Activities
             foreach (KeyValuePair<string, string> property in assemblyInfoProperties)
             {
                 string convertedValue = VersioningHelper.ReplacePatternsInPropertyValue(property.Value, buildDetail, 0,
-                                                                                        buildDate);
+                                                                                        buildDate, workspace, buildAgent);
 
                 fileData = UpdateAssemblyValue(fileData, property.Key, convertedValue, projectType, forceCreate);
             }

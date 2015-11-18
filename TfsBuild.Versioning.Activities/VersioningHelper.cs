@@ -3,10 +3,12 @@ using System.Activities;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.TeamFoundation.Build.Client;
+using Microsoft.TeamFoundation.VersionControl.Client;
 
 // ==============================================================================================
 // http://tfsversioning.codeplex.com/
@@ -182,7 +184,7 @@ namespace TfsBuild.Versioning.Activities
         /// <param name="buildNumberPrefix"></param>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static string ReplacePatternsInPropertyValue(string propertyValue, IBuildDetail buildDetail, int buildNumberPrefix, DateTime date)
+        public static string ReplacePatternsInPropertyValue(string propertyValue, IBuildDetail buildDetail, int buildNumberPrefix, DateTime date, Workspace workspace, IBuildAgent buildAgent)
         {
             const string regExFindTokenPattern = @"\$(?<token>\w+)";
             const string regExReplaceTokenPattern = @"\${0}";
@@ -195,7 +197,7 @@ namespace TfsBuild.Versioning.Activities
             {
                 string token = match.Value.Remove(0, 1);
 
-                string convertedValue = ReplacePatternWithValue(token, buildDetail, buildDetail.BuildNumber, buildNumberPrefix, date);
+                string convertedValue = ReplacePatternWithValue(token, buildDetail, buildDetail.BuildNumber, buildNumberPrefix, date, workspace, buildAgent);
 
                 var regExReplace = new Regex(string.Format(regExReplaceTokenPattern, token));
 
@@ -207,11 +209,6 @@ namespace TfsBuild.Versioning.Activities
             return modifiedPropertyValue;
         }
 
-        public static string ReplacePatternWithValue(string pattern, string buildNumber, int buildNumberPrefix, DateTime date)
-        {
-            return ReplacePatternWithValue(pattern, null, buildNumber, buildNumberPrefix, date);
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -221,7 +218,7 @@ namespace TfsBuild.Versioning.Activities
         /// <param name="buildNumberPrefix"></param>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static string ReplacePatternWithValue(string pattern, IBuildDetail buildDetail, string buildNumber, int buildNumberPrefix, DateTime date)
+        public static string ReplacePatternWithValue(string pattern, IBuildDetail buildDetail, string buildNumber, int buildNumberPrefix, DateTime date, Workspace workspace, IBuildAgent buildAgent)
         {
             var patternUpper = pattern.ToUpper();
             string convertedValue;
@@ -290,6 +287,34 @@ namespace TfsBuild.Versioning.Activities
 
                 case "J":
                     convertedValue = string.Format("{0}{1}", date.ToString("yy"), string.Format("{0:000}", date.DayOfYear));
+                    break;
+
+                case "C":
+                    if (buildDetail == null) throw new ArgumentNullException("buildDetail");
+                    if (workspace == null) throw new ArgumentNullException("workspace");
+                    if (buildAgent == null) throw new ArgumentNullException("buildAgent");
+                    
+                    var workspaceSourcePath = Path.Combine(buildAgent.GetExpandedBuildDirectory(buildDetail.BuildDefinition), "Sources");
+                    
+                    var versionSpec = new WorkspaceVersionSpec(workspace);
+
+                    var historyParams = new QueryHistoryParameters(workspaceSourcePath, RecursionType.Full)
+                    {
+                        ItemVersion = versionSpec,
+                        VersionEnd = versionSpec,
+                        MaxResults = 1
+                    };
+
+                    var changeset = workspace.VersionControlServer.QueryHistory(historyParams).FirstOrDefault();
+
+                    if (changeset != null)
+                    {
+                        convertedValue = changeset.ChangesetId.ToString();
+                    }
+                    else
+                    {
+                        convertedValue = "0";
+                    }
                     break;
 
                 case "B":
