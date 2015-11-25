@@ -5,6 +5,7 @@
  xmlns:mtbc="clr-namespace:Microsoft.TeamFoundation.Build.Client;assembly=Microsoft.TeamFoundation.Build.Client"
  xmlns:mtbwa="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Activities;assembly=Microsoft.TeamFoundation.Build.Workflow"
  xmlns:mtbwt="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Tracking;assembly=Microsoft.TeamFoundation.Build.Workflow"
+ xmlns:mtvc="clr-namespace:Microsoft.TeamFoundation.VersionControl.Client;assembly=Microsoft.TeamFoundation.VersionControl.Client"
  xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
  xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
  xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
@@ -52,6 +53,12 @@
     <x:Property Name="AssemblyTrademarkReplacementPattern" Type="InArgument(x:String)" />
     <x:Property Name="AssemblyCultureReplacementPattern" Type="InArgument(x:String)" />
     <x:Property Name="AssemblyInformationalVersionReplacementPattern" Type="InArgument(x:String)" />
+    <x:Property Name="BuildDetail" Type="InArgument(mtbc:IBuildDetail)" />
+    <x:Property Name="Workspace" Type="InArgument(mtvc:Workspace)" />
+    <x:Property Name="AssemblyDescription" Type="OutArgument(x:String)" />
+    <x:Property Name="AssemblyFileVersion" Type="OutArgument(x:String)" />
+    <x:Property Name="AssemblyVersion" Type="OutArgument(x:String)" />
+    <x:Property Name="AssemblyCopyright" Type="OutArgument(x:String)" />
   </x:Members>
   <mva:VisualBasic.Settings>
     <x:Null />
@@ -122,17 +129,11 @@
                 <DelegateInArgument x:TypeArguments="x:String" Name="path" />
               </ActivityAction.Argument>
               <Sequence sap2010:WorkflowViewState.IdRef="Sequence_3" mtbwt:BuildTrackingParticipant.Importance="Low">
-                <Sequence.Variables>
-                  <Variable x:TypeArguments="mtbc:IBuildDetail" Name="BuildDetail" />
-                </Sequence.Variables>
                 <mtbwa:WriteBuildMessage DisplayName="Log Update" sap2010:WorkflowViewState.IdRef="WriteBuildMessage_1" Importance="[BuildMessageImportance.High]" mtbwt:BuildTrackingParticipant.Importance="Low" Message="[String.Format(&quot;Updating version information in {0}&quot;, path)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
                 <If Condition="[AssemblyVersionReplacementPattern &lt;&gt; String.Empty And AssemblyVersionReplacementPattern &lt;&gt; VersioningHelper.PropertyNotFound]" DisplayName="If AssemblyVersion is defined" sap2010:WorkflowViewState.IdRef="If_1" mtbwt:BuildTrackingParticipant.Importance="Low">
                   <If.Then>
                     <Sequence DisplayName="Convert Pattern and Replace AssemblyVersion" sap2010:WorkflowViewState.IdRef="Sequence_1" mtbwt:BuildTrackingParticipant.Importance="Low">
-                      <Sequence.Variables>
-                        <Variable x:TypeArguments="x:String" Name="AssemblyVersion" />
-                      </Sequence.Variables>
-                      <local:ConvertVersionPattern BuildNumber="[BuildNumber]" BuildNumberPrefix="[BuildNumberPrefix]" ConvertedVersionNumber="[AssemblyVersion]" sap2010:WorkflowViewState.IdRef="ConvertVersionPattern_1" mtbwt:BuildTrackingParticipant.Importance="Low" VersionPattern="[AssemblyVersionReplacementPattern]" />
+                      <local:ConvertVersionPattern BuildDetail="[BuildDetail]" BuildNumber="[BuildNumber]" BuildNumberPrefix="[BuildNumberPrefix]" ConvertedVersionNumber="[AssemblyVersion]" sap2010:WorkflowViewState.IdRef="ConvertVersionPattern_1" mtbwt:BuildTrackingParticipant.Importance="Low" VersionPattern="[AssemblyVersionReplacementPattern]" Workspace="[Workspace]" />
                       <local:ReplaceVersionInFile DisplayName="Replace AssemblyVersion" FilePath="[path]" ForceCreate="[ForceCreateVersion]" sap2010:WorkflowViewState.IdRef="ReplaceVersionInFile_1" mtbwt:BuildTrackingParticipant.Importance="Low" ReplacementVersion="[AssemblyVersion]" VersionType="[TfsBuild.Versioning.Activities.VersionTypeOptions.AssemblyVersion]" />
                     </Sequence>
                   </If.Then>
@@ -140,16 +141,12 @@
                 <If Condition="[AssemblyFileVersionReplacementPattern &lt;&gt; String.Empty And AssemblyFileVersionReplacementPattern &lt;&gt; VersioningHelper.PropertyNotFound]" DisplayName="If AssemblyFileVersion is defined" sap2010:WorkflowViewState.IdRef="If_2" mtbwt:BuildTrackingParticipant.Importance="Low">
                   <If.Then>
                     <Sequence DisplayName="Convert Pattern and Replace AssemblyFileVersion" sap2010:WorkflowViewState.IdRef="Sequence_2" mtbwt:BuildTrackingParticipant.Importance="Low">
-                      <Sequence.Variables>
-                        <Variable x:TypeArguments="x:String" Name="AssemblyFileVersion" />
-                      </Sequence.Variables>
-                      <local:ConvertVersionPattern BuildNumber="[BuildNumber]" BuildNumberPrefix="[BuildNumberPrefix]" ConvertedVersionNumber="[AssemblyFileVersion]" sap2010:WorkflowViewState.IdRef="ConvertVersionPattern_2" mtbwt:BuildTrackingParticipant.Importance="Low" VersionPattern="[AssemblyFileVersionReplacementPattern]" />
+                      <local:ConvertVersionPattern BuildDetail="[BuildDetail]" BuildNumber="[BuildNumber]" BuildNumberPrefix="[BuildNumberPrefix]" ConvertedVersionNumber="[AssemblyFileVersion]" sap2010:WorkflowViewState.IdRef="ConvertVersionPattern_2" mtbwt:BuildTrackingParticipant.Importance="Low" VersionPattern="[AssemblyFileVersionReplacementPattern]" Workspace="[Workspace]" />
                       <local:ReplaceVersionInFile DisplayName="Replace AssemblyFileVersion" FilePath="[path]" ForceCreate="[ForceCreateVersion]" sap2010:WorkflowViewState.IdRef="ReplaceVersionInFile_2" mtbwt:BuildTrackingParticipant.Importance="Low" ReplacementVersion="[AssemblyFileVersion]" VersionType="[TfsBuild.Versioning.Activities.VersionTypeOptions.AssemblyFileVersion]" />
                     </Sequence>
                   </If.Then>
                 </If>
-                <mtbwa:GetBuildDetail sap2010:WorkflowViewState.IdRef="GetBuildDetail_1" Result="[BuildDetail]" />
-                <local:ReplaceAssemblyInfoProperties AssemblyCompany="[AssemblyCompanyReplacementPattern]" AssemblyConfiguration="[AssemblyConfigurationReplacementPattern]" AssemblyCopyright="[AssemblyCopyrightReplacementPattern]" AssemblyCulture="[AssemblyCultureReplacementPattern]" AssemblyDescription="[AssemblyDescriptionReplacementPattern]" AssemblyInformationalVersion="[AssemblyInformationalVersionReplacementPattern]" AssemblyProduct="[AssemblyProductReplacementPattern]" AssemblyTitle="[AssemblyTitleReplacementPattern]" AssemblyTrademark="[AssemblyTrademarkReplacementPattern]" BuildDate="[System.DateTime.Now]" BuildDetail="[BuildDetail]" FilePath="[path]" ForceCreate="[ForceCreateVersion]" sap2010:WorkflowViewState.IdRef="ReplaceAssemblyInfoProperties_1" />
+                <local:ReplaceAssemblyInfoProperties AssemblyCompany="[AssemblyCompanyReplacementPattern]" AssemblyConfiguration="[AssemblyConfigurationReplacementPattern]" AssemblyCopyright="[AssemblyCopyrightReplacementPattern]" AssemblyCulture="[AssemblyCultureReplacementPattern]" AssemblyDescription="[AssemblyDescriptionReplacementPattern]" AssemblyInformationalVersion="[AssemblyInformationalVersionReplacementPattern]" AssemblyProduct="[AssemblyProductReplacementPattern]" AssemblyTitle="[AssemblyTitleReplacementPattern]" AssemblyTrademark="[AssemblyTrademarkReplacementPattern]" BuildDate="[System.DateTime.Now]" BuildDetail="[BuildDetail]" FilePath="[path]" ForceCreate="[ForceCreateVersion]" sap2010:WorkflowViewState.IdRef="ReplaceAssemblyInfoProperties_1" OutAssemblyCopyright="[AssemblyCopyright]" OutAssemblyDescription="[AssemblyDescription]" Workspace="[Workspace]" />
               </Sequence>
             </ActivityAction>
           </ForEach>
@@ -159,7 +156,7 @@
         <mtbwa:WriteBuildWarning DisplayName="Warn No Matches Found" sap2010:WorkflowViewState.IdRef="WriteBuildWarning_1" mtbwt:BuildTrackingParticipant.Importance="Low" Message="[String.Format(&quot;No assembly information files were provided&quot;)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
       </If.Else>
     </If>
-    <sads:DebugSymbol.Symbol>d5MBQzpcX1Rmc1Byb2plY3RzVlMyMDEyXEJ1aWxkQWN0aXZpdGllc1xTb2x1dGlvbkJ1aWxkVmVyc2lvbmluZ1xEZXZcVmVyc2lvbiAyLjAuMC4wXFRmc0J1aWxkLlZlcnNpb25pbmcuQWN0aXZpdGllc1xVcGRhdGVBc3NlbWJseUluZm9GaWxlVmVyc2lvbi54YW1sNnMDowEOAgEBdAWhAQoCAQJ0E3QxAgEDdgmcARQCAQefAQmfAeUCAgEEdwubARUCAQifAbQBnwH+AQIBBne7AXfTAQIBU3wPmQEaAgEJgAERgAGLAwIBT4EBEYsBFgIBO4wBEZYBFgIBJ5cBEZcBcwIBJJgBEZgBhQYCAQqAAdwBgAGkAgIBUYABhAGAAaMBAgFQgQEfgQGrAQIBPIMBFYkBIAIBPYwBH4wBswECASiOARWUASACASmXAWGXAXACASWYAYIBmAGtAQIBIpgB2ASYAe8EAgEhmAH8BJgBiwUCAR+YAaYEmAHNBAIBHZgB+AGYAZ0CAgEbmAGyApgB2wICARmYAfADmAGTBAIBF5gBwAGYAecBAgEVmAG8A5gB4QMCAROYAUaYAWsCARGYAfkCmAGrAwIBD5gBqgWYAcAFAgENmAGVBZgBnQUCAQuHAReHAcQCAgFGiAEXiAHyAgIBPpIBF5IBzAICATKTAReTAf4CAgEqhwGPAYcBogECAU2HAWKHAXcCAUuHAZwChwHBAgIBSYcBQIcBTwIBR4gBigKIAZ0CAgFEiAGqAogB7wICAUOIAXeIAY0BAgFBiAFiiAFqAgE/kgGPAZIBpgECATmSAWKSAXcCATeSAaACkgHJAgIBNZIBQJIBTwIBM5MBjgKTAaUCAgEwkwGyApMB+wICAS+TAXuTAZEBAgEtkwFmkwFuAgEr</sads:DebugSymbol.Symbol>
+    <sads:DebugSymbol.Symbol>d1xDOlxkZXZcVGZzVmVyc2lvbmluZ1x0cnVua1xUZnNCdWlsZC5WZXJzaW9uaW5nLkFjdGl2aXRpZXNcVXBkYXRlQXNzZW1ibHlJbmZvRmlsZVZlcnNpb24ueGFtbDt6A6ABDgIBAXsFngEKAgECexN7MQIBA30JmQEUAgEHnAEJnAHlAgIBBH4LmAEVAgEInAG0AZwB/gECAQZ+uwF+0wECAV6DAQ+WARoCAQmEARGEAYsDAgFahQERjAEWAgFCjQERlAEWAgEqlQERlQH3BgIBCoQB3AGEAaQCAgFchAGEAYQBowECAVuFAR+FAasBAgFDhwEVigEgAgFEjQEfjQGzAQIBK48BFZIBIAIBLJUBggGVAa0BAgEolQHYBJUB7wQCASeVAfwElQGLBQIBJZUBpgSVAc0EAgEjlQH4AZUBnQICASGVAcUGlQHcBgIBH5UBsgKVAdsCAgEdlQHwA5UBkwQCARuVAcABlQHnAQIBGZUBmAaVAa0GAgEXlQG8A5UB4QMCARWVAecGlQH0BgIBE5UBRpUBawIBEZUB+QKVAasDAgEPlQGqBZUBwAUCAQ2VAZUFlQGdBQIBC4gBF4gB+AICAU2JAReJAfICAgFFkAEXkAGAAwIBNZEBF5EB/gICAS2IAasBiAG+AQIBWIgBQIgBTwIBVogBfogBkwECAVSIAbgCiAHdAgIBUogBXIgBawIBUIgB6AKIAfUCAgFOiQGKAokBnQICAUuJAaoCiQHvAgIBSokBd4kBjQECAUiJAWKJAWoCAUaQAasBkAHCAQIBQJABQJABTwIBPpABfpABkwECATyQAbwCkAHlAgIBOpABXJABawIBOJAB8AKQAf0CAgE2kQGOApEBpQICATORAbICkQH7AgIBMpEBe5EBkQECATCRAWaRAW4CAS4=</sads:DebugSymbol.Symbol>
   </Sequence>
   <sap2010:WorkflowViewState.ViewStateManager>
     <sap2010:ViewStateManager>
@@ -184,17 +181,16 @@
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
       <sap2010:ViewStateData Id="If_2" sap:VirtualizedContainerService.HintSize="464,356" />
-      <sap2010:ViewStateData Id="GetBuildDetail_1" sap:VirtualizedContainerService.HintSize="464,22" />
       <sap2010:ViewStateData Id="ReplaceAssemblyInfoProperties_1" sap:VirtualizedContainerService.HintSize="464,22" />
-      <sap2010:ViewStateData Id="Sequence_3" sap:VirtualizedContainerService.HintSize="486,1062">
+      <sap2010:ViewStateData Id="Sequence_3" sap:VirtualizedContainerService.HintSize="486,1000">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="ForEach`1_1" sap:VirtualizedContainerService.HintSize="516,1210" />
-      <sap2010:ViewStateData Id="Sequence_4" sap:VirtualizedContainerService.HintSize="538,1334">
+      <sap2010:ViewStateData Id="ForEach`1_1" sap:VirtualizedContainerService.HintSize="516,1148" />
+      <sap2010:ViewStateData Id="Sequence_4" sap:VirtualizedContainerService.HintSize="538,1272">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -202,7 +198,7 @@
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
       <sap2010:ViewStateData Id="WriteBuildWarning_1" sap:VirtualizedContainerService.HintSize="200,22" />
-      <sap2010:ViewStateData Id="If_3" sap:VirtualizedContainerService.HintSize="763,1482">
+      <sap2010:ViewStateData Id="If_3" sap:VirtualizedContainerService.HintSize="763,1420">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -210,7 +206,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Sequence_5" sap:VirtualizedContainerService.HintSize="785,1606">
+      <sap2010:ViewStateData Id="Sequence_5" sap:VirtualizedContainerService.HintSize="785,1544">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -218,7 +214,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="TfsBuild.Versioning.Activities.UpdateAssemblyInfoFileVersion_1" sap:VirtualizedContainerService.HintSize="825,1686">
+      <sap2010:ViewStateData Id="TfsBuild.Versioning.Activities.UpdateAssemblyInfoFileVersion_1" sap:VirtualizedContainerService.HintSize="825,1624">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="ShouldCollapseAll">False</x:Boolean>

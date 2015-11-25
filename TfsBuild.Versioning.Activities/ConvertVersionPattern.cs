@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Text;
 using System.Activities;
 using Microsoft.TeamFoundation.Build.Client;
+using Microsoft.TeamFoundation.VersionControl.Client;
 
 // ==============================================================================================
 // http://tfsversioning.codeplex.com/
@@ -44,11 +45,17 @@ namespace TfsBuild.Versioning.Activities
         [RequiredArgument]
         public InArgument<int> BuildNumberPrefix { get; set; }
 
+        [RequiredArgument]
+        public InArgument<IBuildDetail> BuildDetail { get; set; }
+
+        [RequiredArgument]
+        public InArgument<Workspace> Workspace { get; set; }
+
         /// <summary>
         /// The converted version number 
         /// </summary>
         public OutArgument<string> ConvertedVersionNumber { get; set; }
-
+        
         #endregion
 
         /// <summary>
@@ -61,7 +68,10 @@ namespace TfsBuild.Versioning.Activities
             var versionPattern = context.GetValue(VersionPattern);
             var buildNumber = context.GetValue(BuildNumber);
             var buildNumberPrefix = context.GetValue(BuildNumberPrefix);
- 
+            var buildDetail = context.GetValue(BuildDetail);
+            var workspace = context.GetValue(Workspace);
+            var buildAgent = context.GetExtension<IBuildAgent>();
+            
             var version = new StringBuilder();
             var addDot = false;
            
@@ -78,7 +88,7 @@ namespace TfsBuild.Versioning.Activities
             {
                 if (addDot) { version.Append("."); }
 
-                version.Append(VersioningHelper.ReplacePatternWithValue(conversionItem, buildNumber, buildNumberPrefix, DateTime.Now));
+                version.Append(VersioningHelper.ReplacePatternWithValue(conversionItem, buildDetail, buildNumber, buildNumberPrefix, DateTime.Now, workspace, buildAgent));
 
                 addDot = true;
             }
