@@ -55,6 +55,10 @@
     <x:Property Name="AssemblyInformationalVersionReplacementPattern" Type="InArgument(x:String)" />
     <x:Property Name="BuildDetail" Type="InArgument(mtbc:IBuildDetail)" />
     <x:Property Name="Workspace" Type="InArgument(mtvc:Workspace)" />
+    <x:Property Name="AssemblyDescription" Type="OutArgument(x:String)" />
+    <x:Property Name="AssemblyFileVersion" Type="OutArgument(x:String)" />
+    <x:Property Name="AssemblyVersion" Type="OutArgument(x:String)" />
+    <x:Property Name="AssemblyCopyright" Type="OutArgument(x:String)" />
   </x:Members>
   <mva:VisualBasic.Settings>
     <x:Null />
@@ -129,9 +133,6 @@
                 <If Condition="[AssemblyVersionReplacementPattern &lt;&gt; String.Empty And AssemblyVersionReplacementPattern &lt;&gt; VersioningHelper.PropertyNotFound]" DisplayName="If AssemblyVersion is defined" sap2010:WorkflowViewState.IdRef="If_1" mtbwt:BuildTrackingParticipant.Importance="Low">
                   <If.Then>
                     <Sequence DisplayName="Convert Pattern and Replace AssemblyVersion" sap2010:WorkflowViewState.IdRef="Sequence_1" mtbwt:BuildTrackingParticipant.Importance="Low">
-                      <Sequence.Variables>
-                        <Variable x:TypeArguments="x:String" Name="AssemblyVersion" />
-                      </Sequence.Variables>
                       <local:ConvertVersionPattern BuildDetail="[BuildDetail]" BuildNumber="[BuildNumber]" BuildNumberPrefix="[BuildNumberPrefix]" ConvertedVersionNumber="[AssemblyVersion]" sap2010:WorkflowViewState.IdRef="ConvertVersionPattern_1" mtbwt:BuildTrackingParticipant.Importance="Low" VersionPattern="[AssemblyVersionReplacementPattern]" Workspace="[Workspace]" />
                       <local:ReplaceVersionInFile DisplayName="Replace AssemblyVersion" FilePath="[path]" ForceCreate="[ForceCreateVersion]" sap2010:WorkflowViewState.IdRef="ReplaceVersionInFile_1" mtbwt:BuildTrackingParticipant.Importance="Low" ReplacementVersion="[AssemblyVersion]" VersionType="[TfsBuild.Versioning.Activities.VersionTypeOptions.AssemblyVersion]" />
                     </Sequence>
@@ -140,15 +141,12 @@
                 <If Condition="[AssemblyFileVersionReplacementPattern &lt;&gt; String.Empty And AssemblyFileVersionReplacementPattern &lt;&gt; VersioningHelper.PropertyNotFound]" DisplayName="If AssemblyFileVersion is defined" sap2010:WorkflowViewState.IdRef="If_2" mtbwt:BuildTrackingParticipant.Importance="Low">
                   <If.Then>
                     <Sequence DisplayName="Convert Pattern and Replace AssemblyFileVersion" sap2010:WorkflowViewState.IdRef="Sequence_2" mtbwt:BuildTrackingParticipant.Importance="Low">
-                      <Sequence.Variables>
-                        <Variable x:TypeArguments="x:String" Name="AssemblyFileVersion" />
-                      </Sequence.Variables>
                       <local:ConvertVersionPattern BuildDetail="[BuildDetail]" BuildNumber="[BuildNumber]" BuildNumberPrefix="[BuildNumberPrefix]" ConvertedVersionNumber="[AssemblyFileVersion]" sap2010:WorkflowViewState.IdRef="ConvertVersionPattern_2" mtbwt:BuildTrackingParticipant.Importance="Low" VersionPattern="[AssemblyFileVersionReplacementPattern]" Workspace="[Workspace]" />
                       <local:ReplaceVersionInFile DisplayName="Replace AssemblyFileVersion" FilePath="[path]" ForceCreate="[ForceCreateVersion]" sap2010:WorkflowViewState.IdRef="ReplaceVersionInFile_2" mtbwt:BuildTrackingParticipant.Importance="Low" ReplacementVersion="[AssemblyFileVersion]" VersionType="[TfsBuild.Versioning.Activities.VersionTypeOptions.AssemblyFileVersion]" />
                     </Sequence>
                   </If.Then>
                 </If>
-                <local:ReplaceAssemblyInfoProperties AssemblyCompany="[AssemblyCompanyReplacementPattern]" AssemblyConfiguration="[AssemblyConfigurationReplacementPattern]" AssemblyCopyright="[AssemblyCopyrightReplacementPattern]" AssemblyCulture="[AssemblyCultureReplacementPattern]" AssemblyDescription="[AssemblyDescriptionReplacementPattern]" AssemblyInformationalVersion="[AssemblyInformationalVersionReplacementPattern]" AssemblyProduct="[AssemblyProductReplacementPattern]" AssemblyTitle="[AssemblyTitleReplacementPattern]" AssemblyTrademark="[AssemblyTrademarkReplacementPattern]" BuildDate="[System.DateTime.Now]" BuildDetail="[BuildDetail]" FilePath="[path]" ForceCreate="[ForceCreateVersion]" sap2010:WorkflowViewState.IdRef="ReplaceAssemblyInfoProperties_1" Workspace="[Workspace]" />
+                <local:ReplaceAssemblyInfoProperties AssemblyCompany="[AssemblyCompanyReplacementPattern]" AssemblyConfiguration="[AssemblyConfigurationReplacementPattern]" AssemblyCopyright="[AssemblyCopyrightReplacementPattern]" AssemblyCulture="[AssemblyCultureReplacementPattern]" AssemblyDescription="[AssemblyDescriptionReplacementPattern]" AssemblyInformationalVersion="[AssemblyInformationalVersionReplacementPattern]" AssemblyProduct="[AssemblyProductReplacementPattern]" AssemblyTitle="[AssemblyTitleReplacementPattern]" AssemblyTrademark="[AssemblyTrademarkReplacementPattern]" BuildDate="[System.DateTime.Now]" BuildDetail="[BuildDetail]" FilePath="[path]" ForceCreate="[ForceCreateVersion]" sap2010:WorkflowViewState.IdRef="ReplaceAssemblyInfoProperties_1" OutAssemblyCopyright="[AssemblyCopyright]" OutAssemblyDescription="[AssemblyDescription]" Workspace="[Workspace]" />
               </Sequence>
             </ActivityAction>
           </ForEach>
@@ -158,7 +156,7 @@
         <mtbwa:WriteBuildWarning DisplayName="Warn No Matches Found" sap2010:WorkflowViewState.IdRef="WriteBuildWarning_1" mtbwt:BuildTrackingParticipant.Importance="Low" Message="[String.Format(&quot;No assembly information files were provided&quot;)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
       </If.Else>
     </If>
-    <sads:DebugSymbol.Symbol>d1xDOlxkZXZcVGZzVmVyc2lvbmluZ1x0cnVua1xUZnNCdWlsZC5WZXJzaW9uaW5nLkFjdGl2aXRpZXNcVXBkYXRlQXNzZW1ibHlJbmZvRmlsZVZlcnNpb24ueGFtbDl2A6IBDgIBAXcFoAEKAgECdxN3MQIBA3kJmwEUAgEGngEJngHlAgIBBHoLmgEVAgEHngG0AZ4B/gECAQV6uwF60wECAVN/D5gBGgIBCIABEYABiwMCAU+BARGLARYCATmMARGWARYCASOXARGXAZ0GAgEJgAHcAYABpAICAVGAAYQBgAGjAQIBUIEBH4EBqwECATqDARWJASACATuMAR+MAbMBAgEkjgEVlAEgAgEllwGCAZcBrQECASGXAdgElwHvBAIBIJcB/ASXAYsFAgEflwGmBJcBzQQCAR2XAfgBlwGdAgIBG5cBsgKXAdsCAgEZlwHwA5cBkwQCAReXAcABlwHnAQIBFZcBvAOXAeEDAgETlwGNBpcBmgYCARKXAUaXAWsCARCXAfkClwGrAwIBDpcBqgWXAcAFAgEMlwGVBZcBnQUCAQqHAReHAfgCAgFEiAEXiAHyAgIBPJIBF5IBgAMCAS6TAReTAf4CAgEmhwGrAYcBvgECAU2HAUCHAU8CAUyHAX6HAZMBAgFKhwG4AocB3QICAUiHAVyHAWsCAUaHAegChwH1AgIBRYgBigKIAZ0CAgFCiAGqAogB7wICAUGIAXeIAY0BAgE/iAFiiAFqAgE9kgGrAZIBwgECATeSAUCSAU8CATaSAX6SAZMBAgE0kgG8ApIB5QICATKSAVySAWsCATCSAfACkgH9AgIBL5MBjgKTAaUCAgEskwGyApMB+wICASuTAXuTAZEBAgEpkwFmkwFuAgEn</sads:DebugSymbol.Symbol>
+    <sads:DebugSymbol.Symbol>d1xDOlxkZXZcVGZzVmVyc2lvbmluZ1x0cnVua1xUZnNCdWlsZC5WZXJzaW9uaW5nLkFjdGl2aXRpZXNcVXBkYXRlQXNzZW1ibHlJbmZvRmlsZVZlcnNpb24ueGFtbDt6A6ABDgIBAXsFngEKAgECexN7MQIBA30JmQEUAgEHnAEJnAHlAgIBBH4LmAEVAgEInAG0AZwB/gECAQZ+uwF+0wECAV6DAQ+WARoCAQmEARGEAYsDAgFahQERjAEWAgFCjQERlAEWAgEqlQERlQH3BgIBCoQB3AGEAaQCAgFchAGEAYQBowECAVuFAR+FAasBAgFDhwEVigEgAgFEjQEfjQGzAQIBK48BFZIBIAIBLJUBggGVAa0BAgEolQHYBJUB7wQCASeVAfwElQGLBQIBJZUBpgSVAc0EAgEjlQH4AZUBnQICASGVAcUGlQHcBgIBH5UBsgKVAdsCAgEdlQHwA5UBkwQCARuVAcABlQHnAQIBGZUBmAaVAa0GAgEXlQG8A5UB4QMCARWVAecGlQH0BgIBE5UBRpUBawIBEZUB+QKVAasDAgEPlQGqBZUBwAUCAQ2VAZUFlQGdBQIBC4gBF4gB+AICAU2JAReJAfICAgFFkAEXkAGAAwIBNZEBF5EB/gICAS2IAasBiAG+AQIBWIgBQIgBTwIBVogBfogBkwECAVSIAbgCiAHdAgIBUogBXIgBawIBUIgB6AKIAfUCAgFOiQGKAokBnQICAUuJAaoCiQHvAgIBSokBd4kBjQECAUiJAWKJAWoCAUaQAasBkAHCAQIBQJABQJABTwIBPpABfpABkwECATyQAbwCkAHlAgIBOpABXJABawIBOJAB8AKQAf0CAgE2kQGOApEBpQICATORAbICkQH7AgIBMpEBe5EBkQECATCRAWaRAW4CAS4=</sads:DebugSymbol.Symbol>
   </Sequence>
   <sap2010:WorkflowViewState.ViewStateManager>
     <sap2010:ViewStateManager>

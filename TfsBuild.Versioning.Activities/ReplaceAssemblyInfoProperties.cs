@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Activities;
@@ -56,7 +57,10 @@ namespace TfsBuild.Versioning.Activities
         public InArgument<string> AssemblyTrademark { get; set; }
         public InArgument<string> AssemblyCulture { get; set; }
         public InArgument<string> AssemblyInformationalVersion { get; set; }
-        
+
+        public OutArgument<string> OutAssemblyDescription { get; set; }
+        public OutArgument<string> OutAssemblyCopyright { get; set; }
+
         #endregion
 
         /// <summary>
@@ -107,7 +111,10 @@ namespace TfsBuild.Versioning.Activities
             var projectType = VersioningHelper.GetProjectTypeFromFileName(filePath);
 
             // Perform the update of the assembly info values based on the list created above
-            UpdateAssemblyValues(filePath, assemblyInfoProperties, buildDetail, buildDate, projectType, forceCreate, workspace, buildAgent);
+            var convertedValues = UpdateAssemblyValues(filePath, assemblyInfoProperties, buildDetail, buildDate, projectType, forceCreate, workspace, buildAgent);
+            
+            context.SetValue(OutAssemblyCopyright, convertedValues.Any(x => x.Key == "AssemblyCopyright") ? convertedValues.First(x => x.Key == "AssemblyCopyright").Value : string.Empty);
+            context.SetValue(OutAssemblyDescription, convertedValues.Any(x => x.Key == "AssemblyDescription") ? convertedValues.First(x => x.Key == "AssemblyDescription").Value : string.Empty);
         }
 
         /// <summary>
@@ -119,9 +126,10 @@ namespace TfsBuild.Versioning.Activities
         /// <param name="buildDate"></param>
         /// <param name="projectType">Type of project (cs, vb, cpp or fs)</param>
         /// <param name="forceCreate">If the value isn't in the AssemblyInfo file do we insert it anyway</param>
-        public void UpdateAssemblyValues(string filePath, IList<KeyValuePair<string, string>> assemblyInfoProperties, 
+        public ICollection<KeyValuePair<string, string>> UpdateAssemblyValues(string filePath, IList<KeyValuePair<string, string>> assemblyInfoProperties, 
             IBuildDetail buildDetail, DateTime buildDate, ProjectTypes projectType, bool forceCreate, Workspace workspace, IBuildAgent buildAgent)
         {
+            var convertedValues = new List<KeyValuePair<string, string>>();
             var newFileData = new StringBuilder();
 
             // make sure you can write to the file
@@ -142,6 +150,8 @@ namespace TfsBuild.Versioning.Activities
             {
                 string convertedValue = VersioningHelper.ReplacePatternsInPropertyValue(property.Value, buildDetail, 0,
                                                                                         buildDate, workspace, buildAgent);
+
+                convertedValues.Add(new KeyValuePair<string, string>(property.Key, convertedValue));
 
                 fileData = UpdateAssemblyValue(fileData, property.Key, convertedValue, projectType, forceCreate);
             }
@@ -167,6 +177,8 @@ namespace TfsBuild.Versioning.Activities
 
             // restore the file's original attributes
             File.SetAttributes(filePath, currentFileAttributes);
+
+            return convertedValues;
         }
 
         /// <summary>
