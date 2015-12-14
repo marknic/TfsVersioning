@@ -60,6 +60,7 @@
     <x:Property Name="AssemblyVersion" Type="OutArgument(x:String)" />
     <x:Property Name="AssemblyCopyright" Type="OutArgument(x:String)" />
     <x:Property Name="AssemblyProduct" Type="OutArgument(x:String)" />
+    <x:Property Name="AssemblyInformationalVersion" Type="OutArgument(x:String)" />
   </x:Members>
   <mva:VisualBasic.Settings>
     <x:Null />
@@ -147,7 +148,7 @@
                     </Sequence>
                   </If.Then>
                 </If>
-                <local:ReplaceAssemblyInfoProperties AssemblyCompany="[AssemblyCompanyReplacementPattern]" AssemblyConfiguration="[AssemblyConfigurationReplacementPattern]" AssemblyCopyright="[AssemblyCopyrightReplacementPattern]" AssemblyCulture="[AssemblyCultureReplacementPattern]" AssemblyDescription="[AssemblyDescriptionReplacementPattern]" AssemblyInformationalVersion="[AssemblyInformationalVersionReplacementPattern]" AssemblyProduct="[AssemblyProductReplacementPattern]" AssemblyTitle="[AssemblyTitleReplacementPattern]" AssemblyTrademark="[AssemblyTrademarkReplacementPattern]" BuildDate="[System.DateTime.Now]" BuildDetail="[BuildDetail]" FilePath="[path]" ForceCreate="[ForceCreateVersion]" sap2010:WorkflowViewState.IdRef="ReplaceAssemblyInfoProperties_1" OutAssemblyCopyright="[AssemblyCopyright]" OutAssemblyDescription="[AssemblyDescription]" OutAssemblyProduct="[AssemblyProduct]" Workspace="[Workspace]" />
+                <local:ReplaceAssemblyInfoProperties AssemblyCompany="[AssemblyCompanyReplacementPattern]" AssemblyConfiguration="[AssemblyConfigurationReplacementPattern]" AssemblyCopyright="[AssemblyCopyrightReplacementPattern]" AssemblyCulture="[AssemblyCultureReplacementPattern]" AssemblyDescription="[AssemblyDescriptionReplacementPattern]" AssemblyInformationalVersion="[AssemblyInformationalVersionReplacementPattern]" AssemblyProduct="[AssemblyProductReplacementPattern]" AssemblyTitle="[AssemblyTitleReplacementPattern]" AssemblyTrademark="[AssemblyTrademarkReplacementPattern]" BuildDate="[System.DateTime.Now]" BuildDetail="[BuildDetail]" FilePath="[path]" ForceCreate="[ForceCreateVersion]" sap2010:WorkflowViewState.IdRef="ReplaceAssemblyInfoProperties_1" OutAssemblyCopyright="[AssemblyCopyright]" OutAssemblyDescription="[AssemblyDescription]" OutAssemblyInformationalVersion="[AssemblyInformationalVersion]" OutAssemblyProduct="[AssemblyProduct]" Workspace="[Workspace]" />
               </Sequence>
             </ActivityAction>
           </ForEach>
@@ -157,7 +158,7 @@
         <mtbwa:WriteBuildWarning DisplayName="Warn No Matches Found" sap2010:WorkflowViewState.IdRef="WriteBuildWarning_1" mtbwt:BuildTrackingParticipant.Importance="Low" Message="[String.Format(&quot;No assembly information files were provided&quot;)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
       </If.Else>
     </If>
-    <sads:DebugSymbol.Symbol>d1xDOlxkZXZcVGZzVmVyc2lvbmluZ1x0cnVua1xUZnNCdWlsZC5WZXJzaW9uaW5nLkFjdGl2aXRpZXNcVXBkYXRlQXNzZW1ibHlJbmZvRmlsZVZlcnNpb24ueGFtbDx7A6EBDgIBAXwFnwEKAgECfBN8MQIBA34JmgEUAgEHnQEJnQHlAgIBBH8LmQEVAgEInQG0AZ0B/gECAQZ/uwF/0wECAWCEAQ+XARoCAQmFARGFAYsDAgFchgERjQEWAgFEjgERlQEWAgEslgERlgGeBwIBCoUB3AGFAaQCAgFehQGEAYUBowECAV2GAR+GAasBAgFFiAEViwEgAgFGjgEfjgGzAQIBLZABFZMBIAIBLpYBggGWAa0BAgEqlgHYBJYB7wQCASmWAfwElgGLBQIBJ5YBpgSWAc0EAgEllgH4AZYBnQICASOWAcUGlgHcBgIBIZYBsgKWAdsCAgEflgHwA5YBkwQCAR2WAcABlgHnAQIBG5YBmAaWAa0GAgEZlgG8A5YB4QMCAReWAY4HlgGbBwIBFZYBRpYBawIBE5YB+QKWAasDAgERlgGqBZYBwAUCAQ+WAfAGlgGDBwIBDZYBlQWWAZ0FAgELiQEXiQH4AgIBT4oBF4oB8gICAUeRAReRAYADAgE3kgEXkgH+AgIBL4kBqwGJAb4BAgFaiQFAiQFPAgFYiQF+iQGTAQIBVokBuAKJAd0CAgFUiQFciQFrAgFSiQHoAokB9QICAVCKAYoCigGdAgIBTYoBqgKKAe8CAgFMigF3igGNAQIBSooBYooBagIBSJEBqwGRAcIBAgFCkQFAkQFPAgFAkQF+kQGTAQIBPpEBvAKRAeUCAgE8kQFckQFrAgE6kQHwApEB/QICATiSAY4CkgGlAgIBNZIBsgKSAfsCAgE0kgF7kgGRAQIBMpIBZpIBbgIBMA==</sads:DebugSymbol.Symbol>
+    <sads:DebugSymbol.Symbol>d1xDOlxkZXZcVGZzVmVyc2lvbmluZ1x0cnVua1xUZnNCdWlsZC5WZXJzaW9uaW5nLkFjdGl2aXRpZXNcVXBkYXRlQXNzZW1ibHlJbmZvRmlsZVZlcnNpb24ueGFtbD18A6IBDgIBAX0FoAEKAgECfRN9MQIBA38JmwEUAgEHngEJngHlAgIBBIABC5oBFQIBCJ4BtAGeAf4BAgEGgAG7AYAB0wECAWKFAQ+YARoCAQmGARGGAYsDAgFehwERjgEWAgFGjwERlgEWAgEulwERlwHfBwIBCoYB3AGGAaQCAgFghgGEAYYBowECAV+HAR+HAasBAgFHiQEVjAEgAgFIjwEfjwGzAQIBL5EBFZQBIAIBMJcBggGXAa0BAgEslwHYBJcB7wQCASuXAfwElwGLBQIBKZcBpgSXAc0EAgEnlwH4AZcBnQICASWXAcUGlwHcBgIBI5cBsgKXAdsCAgEhlwHwA5cBkwQCAR+XAcABlwHnAQIBHZcBmAaXAa0GAgEblwG8A5cB4QMCARmXAc8HlwHcBwIBF5cBRpcBawIBFZcB+QKXAasDAgETlwH9BpcBnQcCARGXAaoFlwHABQIBD5cBsQeXAcQHAgENlwGVBZcBnQUCAQuKAReKAfgCAgFRiwEXiwHyAgIBSZIBF5IBgAMCATmTAReTAf4CAgExigGrAYoBvgECAVyKAUCKAU8CAVqKAX6KAZMBAgFYigG4AooB3QICAVaKAVyKAWsCAVSKAegCigH1AgIBUosBigKLAZ0CAgFPiwGqAosB7wICAU6LAXeLAY0BAgFMiwFiiwFqAgFKkgGrAZIBwgECAUSSAUCSAU8CAUKSAX6SAZMBAgFAkgG8ApIB5QICAT6SAVySAWsCATySAfACkgH9AgIBOpMBjgKTAaUCAgE3kwGyApMB+wICATaTAXuTAZEBAgE0kwFmkwFuAgEy</sads:DebugSymbol.Symbol>
   </Sequence>
   <sap2010:WorkflowViewState.ViewStateManager>
     <sap2010:ViewStateManager>

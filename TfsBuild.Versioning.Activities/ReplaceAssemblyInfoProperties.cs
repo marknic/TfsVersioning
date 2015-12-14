@@ -61,6 +61,7 @@ namespace TfsBuild.Versioning.Activities
         public OutArgument<string> OutAssemblyDescription { get; set; }
         public OutArgument<string> OutAssemblyCopyright { get; set; }
         public OutArgument<string> OutAssemblyProduct { get; set; }
+        public OutArgument<string> OutAssemblyInformationalVersion { get; set; }
 
         #endregion
 
@@ -117,6 +118,7 @@ namespace TfsBuild.Versioning.Activities
             context.SetValue(OutAssemblyCopyright, convertedValues.Any(x => x.Key == "AssemblyCopyright") ? convertedValues.First(x => x.Key == "AssemblyCopyright").Value : string.Empty);
             context.SetValue(OutAssemblyProduct, convertedValues.Any(x => x.Key == "AssemblyProduct") ? convertedValues.First(x => x.Key == "AssemblyProduct").Value : string.Empty);
             context.SetValue(OutAssemblyDescription, convertedValues.Any(x => x.Key == "AssemblyDescription") ? convertedValues.First(x => x.Key == "AssemblyDescription").Value : string.Empty);
+            context.SetValue(OutAssemblyInformationalVersion, convertedValues.Any(x => x.Key == "AssemblyInformationalVersion") ? convertedValues.First(x => x.Key == "AssemblyInformationalVersion").Value : string.Empty);
         }
 
         /// <summary>
