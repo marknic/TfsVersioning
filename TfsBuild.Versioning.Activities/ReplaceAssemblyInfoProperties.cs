@@ -47,6 +47,18 @@ namespace TfsBuild.Versioning.Activities
         [RequiredArgument]
         public InArgument<Workspace> Workspace { get; set; }
 
+        /// <summary>
+        /// The prefix value to add to the build number to make it unique compared to other builds
+        /// </summary>
+        [RequiredArgument]
+        public InArgument<int> BuildNumberPrefix { get; set; }
+
+        [RequiredArgument]
+        public InArgument<int> BuildIncrementValue { get; set; }
+
+        [RequiredArgument]
+        public InArgument<int> BuildNumberSeed { get; set; }
+
         // Assembly properties
         public InArgument<string> AssemblyTitle { get; set; }
         public InArgument<string> AssemblyDescription { get; set; }
@@ -77,8 +89,11 @@ namespace TfsBuild.Versioning.Activities
             var buildDetail = context.GetValue(BuildDetail);
             var buildDate = context.GetValue(BuildDate);
             var workspace = context.GetValue(Workspace);
+            var buildNumberPrefix = context.GetValue(BuildNumberPrefix);
+            var buildIncrementValue = context.GetValue(BuildIncrementValue);
+            var buildNumberSeed = context.GetValue(BuildNumberSeed);
             var buildAgent = context.GetExtension<IBuildAgent>();
-    
+            
             #region Validate Arguments
 
             if (String.IsNullOrEmpty(filePath))
@@ -113,7 +128,7 @@ namespace TfsBuild.Versioning.Activities
             var projectType = VersioningHelper.GetProjectTypeFromFileName(filePath);
 
             // Perform the update of the assembly info values based on the list created above
-            var convertedValues = UpdateAssemblyValues(filePath, assemblyInfoProperties, buildDetail, buildDate, projectType, forceCreate, workspace, buildAgent);
+            var convertedValues = UpdateAssemblyValues(filePath, assemblyInfoProperties, buildDetail, buildDate, projectType, forceCreate, workspace, buildAgent, buildNumberPrefix, buildIncrementValue, buildNumberSeed);
             
             context.SetValue(OutAssemblyCopyright, convertedValues.Any(x => x.Key == "AssemblyCopyright") ? convertedValues.First(x => x.Key == "AssemblyCopyright").Value : string.Empty);
             context.SetValue(OutAssemblyProduct, convertedValues.Any(x => x.Key == "AssemblyProduct") ? convertedValues.First(x => x.Key == "AssemblyProduct").Value : string.Empty);
@@ -130,8 +145,13 @@ namespace TfsBuild.Versioning.Activities
         /// <param name="buildDate"></param>
         /// <param name="projectType">Type of project (cs, vb, cpp or fs)</param>
         /// <param name="forceCreate">If the value isn't in the AssemblyInfo file do we insert it anyway</param>
-        public ICollection<KeyValuePair<string, string>> UpdateAssemblyValues(string filePath, IList<KeyValuePair<string, string>> assemblyInfoProperties, 
-            IBuildDetail buildDetail, DateTime buildDate, ProjectTypes projectType, bool forceCreate, Workspace workspace, IBuildAgent buildAgent)
+        /// <param name="workspace"></param>
+        /// <param name="buildAgent"></param>
+        /// <param name="buildNumberPrefix"></param>
+        /// <param name="incrementBy"></param>
+        /// <param name="buildNumberSeed"></param>
+        public ICollection<KeyValuePair<string, string>> UpdateAssemblyValues(string filePath, IList<KeyValuePair<string, string>> assemblyInfoProperties,
+            IBuildDetail buildDetail, DateTime buildDate, ProjectTypes projectType, bool forceCreate, Workspace workspace, IBuildAgent buildAgent, int buildNumberPrefix, int incrementBy, int buildNumberSeed)
         {
             var convertedValues = new List<KeyValuePair<string, string>>();
             var newFileData = new StringBuilder();
@@ -152,7 +172,7 @@ namespace TfsBuild.Versioning.Activities
 
             foreach (KeyValuePair<string, string> property in assemblyInfoProperties)
             {
-                string convertedValue = VersioningHelper.ReplacePatternsInPropertyValue(property.Value, buildDetail, 0,
+                string convertedValue = VersioningHelper.ReplacePatternsInPropertyValue(property.Value, buildDetail, buildNumberPrefix, incrementBy, buildNumberSeed,
                                                                                         buildDate, workspace, buildAgent);
 
                 convertedValues.Add(new KeyValuePair<string, string>(property.Key, convertedValue));

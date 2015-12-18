@@ -46,6 +46,12 @@ namespace TfsBuild.Versioning.Activities
         public InArgument<int> BuildNumberPrefix { get; set; }
 
         [RequiredArgument]
+        public InArgument<int> BuildIncrementValue { get; set; }
+
+        [RequiredArgument]
+        public InArgument<int> BuildNumberSeed { get; set; }
+
+        [RequiredArgument]
         public InArgument<IBuildDetail> BuildDetail { get; set; }
 
         [RequiredArgument]
@@ -68,10 +74,12 @@ namespace TfsBuild.Versioning.Activities
             var versionPattern = context.GetValue(VersionPattern);
             var buildNumber = context.GetValue(BuildNumber);
             var buildNumberPrefix = context.GetValue(BuildNumberPrefix);
+            var buildIncrementValue = context.GetValue(BuildIncrementValue);
+            var buildNumberSeed = context.GetValue(BuildNumberSeed);
             var buildDetail = context.GetValue(BuildDetail);
             var workspace = context.GetValue(Workspace);
             var buildAgent = context.GetExtension<IBuildAgent>();
-            
+
             var version = new StringBuilder();
             var addDot = false;
            
@@ -88,7 +96,7 @@ namespace TfsBuild.Versioning.Activities
             {
                 if (addDot) { version.Append("."); }
 
-                version.Append(VersioningHelper.ReplacePatternWithValue(conversionItem, buildDetail, buildNumber, buildNumberPrefix, DateTime.Now, workspace, buildAgent));
+                version.Append(VersioningHelper.ReplacePatternWithValue(conversionItem, buildDetail, buildNumber, buildNumberPrefix, buildIncrementValue, buildNumberSeed, DateTime.Now, workspace, buildAgent));
 
                 addDot = true;
             }
