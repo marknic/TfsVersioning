@@ -268,7 +268,7 @@ namespace TfsBuild.Versioning.Activities
 
                 case "BNUM":
                     if (buildDetail == null) throw new ArgumentNullException("buildDetail");
-                    convertedValue = buildDetail.BuildNumber;
+                    convertedValue = internalBuildNumber;
                     break;
 
                 case "YYYY":
@@ -301,7 +301,7 @@ namespace TfsBuild.Versioning.Activities
                     var workspaceSourcePath = Path.Combine(buildAgent.GetExpandedBuildDirectory(buildDetail.BuildDefinition), "Sources");
                     
                     var versionSpec = new WorkspaceVersionSpec(workspace);
-
+                    
                     var historyParams = new QueryHistoryParameters(workspaceSourcePath, RecursionType.Full)
                     {
                         ItemVersion = versionSpec,
@@ -320,13 +320,20 @@ namespace TfsBuild.Versioning.Activities
                         convertedValue = "0";
                     }
                     break;
-
+                    
                 case "B":
                      if (incrementBy <= 0) throw new ArgumentException("incrementBy cannot be <= 0.", "incrementBy");
 
                     var buildNum = GetBuildNumberValue(internalBuildNumber, buildNumberSeed, buildNumberPrefix);
 
                     convertedValue = (buildNum * incrementBy).ToString();
+
+                    break;
+
+                case "S":
+                    if (buildDetail == null) throw new ArgumentNullException("buildDetail");
+
+                    convertedValue = buildDetail.Reason == BuildReason.ValidateShelveset ? "1" : "0";
 
                     break;
 
