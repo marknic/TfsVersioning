@@ -326,7 +326,7 @@ namespace TfsBuild.Versioning.Activities
 
                     var buildNum = GetBuildNumberValue(internalBuildNumber, buildNumberSeed, buildNumberPrefix);
 
-                    convertedValue = (buildNum * incrementBy).ToString();
+                    convertedValue = Math.Abs(buildNum * incrementBy).ToString();
 
                     break;
 
