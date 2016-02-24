@@ -222,7 +222,7 @@ namespace TfsBuild.Versioning.Activities
         /// <param name="buildNumberSeed"></param>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static string ReplacePatternWithValue(string pattern, IBuildDetail buildDetail, string buildNumber, int buildNumberPrefix, int incrementBy, int buildNumberSeed, DateTime date, Workspace workspace, IBuildAgent buildAgent)
+        public static string ReplacePatternWithValue(string pattern, IBuildDetail buildDetail, string buildNumber, int buildNumberPrefix, int incrementBy, int buildNumberSeed, DateTime date, Workspace workspace, IBuildAgent buildAgent, int changesetMax)
         {
             var patternUpper = pattern.ToUpper();
             string convertedValue;
@@ -297,23 +297,29 @@ namespace TfsBuild.Versioning.Activities
                     if (buildDetail == null) throw new ArgumentNullException("buildDetail");
                     if (workspace == null) throw new ArgumentNullException("workspace");
                     if (buildAgent == null) throw new ArgumentNullException("buildAgent");
-                    
-                    var workspaceSourcePath = Path.Combine(buildAgent.GetExpandedBuildDirectory(buildDetail.BuildDefinition), "Sources");
-                    
-                    var versionSpec = new WorkspaceVersionSpec(workspace);
-                    
-                    var historyParams = new QueryHistoryParameters(workspaceSourcePath, RecursionType.Full)
-                    {
-                        ItemVersion = versionSpec,
-                        VersionEnd = versionSpec,
-                        MaxResults = 1
-                    };
 
-                    var changeset = workspace.VersionControlServer.QueryHistory(historyParams).FirstOrDefault();
+                    var changeset = GetChangeset(buildDetail, workspace, buildAgent);
 
                     if (changeset != null)
                     {
-                        convertedValue = changeset.ChangesetId.ToString();
+                        convertedValue = (changeset.ChangesetId % changesetMax).ToString();
+                    }
+                    else
+                    {
+                        convertedValue = "0";
+                    }
+                    break;
+
+                case "CO":
+                    if (buildDetail == null) throw new ArgumentNullException("buildDetail");
+                    if (workspace == null) throw new ArgumentNullException("workspace");
+                    if (buildAgent == null) throw new ArgumentNullException("buildAgent");
+                    
+                    var overflowChangeset = GetChangeset(buildDetail, workspace, buildAgent);
+
+                    if (overflowChangeset != null)
+                    {
+                        convertedValue = (overflowChangeset.ChangesetId / changesetMax).ToString();
                     }
                     else
                     {
@@ -321,6 +327,7 @@ namespace TfsBuild.Versioning.Activities
                     }
                     break;
                     
+
                 case "B":
                      if (incrementBy <= 0) throw new ArgumentException("incrementBy cannot be <= 0.", "incrementBy");
 
@@ -333,7 +340,14 @@ namespace TfsBuild.Versioning.Activities
                 case "S":
                     if (buildDetail == null) throw new ArgumentNullException("buildDetail");
 
-                    convertedValue = buildDetail.Reason == BuildReason.ValidateShelveset ? "1" : "0";
+                    convertedValue = buildDetail.Reason == BuildReason.ValidateShelveset ? "65535" : "0";
+
+                    break;
+
+                case "SN":
+                    if (buildDetail == null) throw new ArgumentNullException("buildDetail");
+
+                    convertedValue = buildDetail.ShelvesetName;
 
                     break;
 
@@ -343,6 +357,23 @@ namespace TfsBuild.Versioning.Activities
             }
 
             return convertedValue;
+        }
+
+        private static Changeset GetChangeset(IBuildDetail buildDetail, Workspace workspace, IBuildAgent buildAgent)
+        {
+            var workspaceSourcePath = Path.Combine(buildAgent.GetExpandedBuildDirectory(buildDetail.BuildDefinition), "Sources");
+
+            var versionSpec = new WorkspaceVersionSpec(workspace);
+
+            var historyParams = new QueryHistoryParameters(workspaceSourcePath, RecursionType.Full)
+            {
+                ItemVersion = versionSpec,
+                VersionEnd = versionSpec,
+                MaxResults = 1
+            };
+
+            var changeset = workspace.VersionControlServer.QueryHistory(historyParams).FirstOrDefault();
+            return changeset;
         }
 
         private static int GetBuildNumberValue(string internalBuildNumber, int buildNumberSeed, int buildNumberPrefix)
