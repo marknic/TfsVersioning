@@ -3,10 +3,12 @@ using System.Activities;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.TeamFoundation.Build.Client;
+using Microsoft.TeamFoundation.VersionControl.Client;
 
 // ==============================================================================================
 // http://tfsversioning.codeplex.com/
@@ -180,9 +182,11 @@ namespace TfsBuild.Versioning.Activities
         /// <param name="propertyValue"></param>
         /// <param name="buildDetail"></param>
         /// <param name="buildNumberPrefix"></param>
+        /// <param name="incrementBy"></param>
+        /// <param name="buildNumberSeed"></param>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static string ReplacePatternsInPropertyValue(string propertyValue, IBuildDetail buildDetail, int buildNumberPrefix, DateTime date)
+        public static string ReplacePatternsInPropertyValue(string propertyValue, IBuildDetail buildDetail, int buildNumberPrefix, int incrementBy, int buildNumberSeed, DateTime date, Workspace workspace, IBuildAgent buildAgent)
         {
             const string regExFindTokenPattern = @"\$(?<token>\w+)";
             const string regExReplaceTokenPattern = @"\${0}";
@@ -195,7 +199,7 @@ namespace TfsBuild.Versioning.Activities
             {
                 string token = match.Value.Remove(0, 1);
 
-                string convertedValue = ReplacePatternWithValue(token, buildDetail, buildDetail.BuildNumber, buildNumberPrefix, date);
+                string convertedValue = ReplacePatternWithValue(token, buildDetail, buildDetail.BuildNumber, buildNumberPrefix, incrementBy, buildNumberSeed, date, workspace, buildAgent);
 
                 var regExReplace = new Regex(string.Format(regExReplaceTokenPattern, token));
 
@@ -207,11 +211,6 @@ namespace TfsBuild.Versioning.Activities
             return modifiedPropertyValue;
         }
 
-        public static string ReplacePatternWithValue(string pattern, string buildNumber, int buildNumberPrefix, DateTime date)
-        {
-            return ReplacePatternWithValue(pattern, null, buildNumber, buildNumberPrefix, date);
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -219,9 +218,11 @@ namespace TfsBuild.Versioning.Activities
         /// <param name="buildDetail"></param>
         /// <param name="buildNumber">The full build number - left in for versioning (backward compatibility) reasons</param>
         /// <param name="buildNumberPrefix"></param>
+        /// <param name="incrementBy"></param>
+        /// <param name="buildNumberSeed"></param>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static string ReplacePatternWithValue(string pattern, IBuildDetail buildDetail, string buildNumber, int buildNumberPrefix, DateTime date)
+        public static string ReplacePatternWithValue(string pattern, IBuildDetail buildDetail, string buildNumber, int buildNumberPrefix, int incrementBy, int buildNumberSeed, DateTime date, Workspace workspace, IBuildAgent buildAgent, int changesetMax)
         {
             var patternUpper = pattern.ToUpper();
             string convertedValue;
@@ -267,7 +268,7 @@ namespace TfsBuild.Versioning.Activities
 
                 case "BNUM":
                     if (buildDetail == null) throw new ArgumentNullException("buildDetail");
-                    convertedValue = buildDetail.BuildNumber;
+                    convertedValue = internalBuildNumber;
                     break;
 
                 case "YYYY":
@@ -292,39 +293,62 @@ namespace TfsBuild.Versioning.Activities
                     convertedValue = string.Format("{0}{1}", date.ToString("yy"), string.Format("{0:000}", date.DayOfYear));
                     break;
 
+                case "C":
+                    if (buildDetail == null) throw new ArgumentNullException("buildDetail");
+                    if (workspace == null) throw new ArgumentNullException("workspace");
+                    if (buildAgent == null) throw new ArgumentNullException("buildAgent");
+
+                    var changeset = GetChangeset(buildDetail, workspace, buildAgent);
+
+                    if (changeset != null)
+                    {
+                        convertedValue = (changeset.ChangesetId % changesetMax).ToString();
+                    }
+                    else
+                    {
+                        convertedValue = "0";
+                    }
+                    break;
+
+                case "CO":
+                    if (buildDetail == null) throw new ArgumentNullException("buildDetail");
+                    if (workspace == null) throw new ArgumentNullException("workspace");
+                    if (buildAgent == null) throw new ArgumentNullException("buildAgent");
+                    
+                    var overflowChangeset = GetChangeset(buildDetail, workspace, buildAgent);
+
+                    if (overflowChangeset != null)
+                    {
+                        convertedValue = (overflowChangeset.ChangesetId / changesetMax).ToString();
+                    }
+                    else
+                    {
+                        convertedValue = "0";
+                    }
+                    break;
+                    
+
                 case "B":
-                    if (string.IsNullOrEmpty(buildNumber))
-                    {
-                        throw new ArgumentException("BuildNumber must contain the build value: use $(Rev:.r) at the end of the Build Number Format");
-                    }
+                     if (incrementBy <= 0) throw new ArgumentException("incrementBy cannot be <= 0.", "incrementBy");
 
-                    int buildNumberValue;
+                    var buildNum = GetBuildNumberValue(internalBuildNumber, buildNumberSeed, buildNumberPrefix);
 
-                    // Attempt to parse - this should probably fail since it will only work if the only thing passed 
-                    //  in through the BuildNumber is a number.  This is typically something like: "Buildname.year.month.buildNumber"
-                    var isNumber = int.TryParse(internalBuildNumber, out buildNumberValue);
+                    convertedValue = Math.Abs(buildNum * incrementBy).ToString();
 
-                    if (!isNumber)
-                    {
-                        var buildNumberArray = internalBuildNumber.Split('.');
+                    break;
 
-                        const string exceptionString = "'Build Number Format' in the build definition must end with $(Rev:.r) to use the build number in the version pattern.  Suggested pattern: $(BuildDefinitionName)_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)";
+                case "S":
+                    if (buildDetail == null) throw new ArgumentNullException("buildDetail");
 
-                        if (buildNumberArray.Length < 2)
-                        {
-                            throw new ArgumentException(exceptionString);
-                        }
+                    convertedValue = buildDetail.Reason == BuildReason.ValidateShelveset ? "65535" : "0";
 
-                        isNumber = int.TryParse(buildNumberArray[buildNumberArray.Length - 1], out buildNumberValue);
+                    break;
 
-                        if (isNumber == false)
-                        {
-                            throw new ArgumentException(exceptionString);
-                        }
-                    }
+                case "SN":
+                    if (buildDetail == null) throw new ArgumentNullException("buildDetail");
 
-                    buildNumberValue = AddBuildNumberPrefixIfNecessary(buildNumberPrefix, buildNumberValue);
-                    convertedValue = buildNumberValue.ToString();
+                    convertedValue = buildDetail.ShelvesetName;
+
                     break;
 
                 default:
@@ -333,6 +357,54 @@ namespace TfsBuild.Versioning.Activities
             }
 
             return convertedValue;
+        }
+
+        private static Changeset GetChangeset(IBuildDetail buildDetail, Workspace workspace, IBuildAgent buildAgent)
+        {
+            var workspaceSourcePath = Path.Combine(buildAgent.GetExpandedBuildDirectory(buildDetail.BuildDefinition), "Sources");
+
+            var versionSpec = new WorkspaceVersionSpec(workspace);
+
+            var historyParams = new QueryHistoryParameters(workspaceSourcePath, RecursionType.Full)
+            {
+                ItemVersion = versionSpec,
+                VersionEnd = versionSpec,
+                MaxResults = 1
+            };
+
+            var changeset = workspace.VersionControlServer.QueryHistory(historyParams).FirstOrDefault();
+            return changeset;
+        }
+
+        private static int GetBuildNumberValue(string internalBuildNumber, int buildNumberSeed, int buildNumberPrefix)
+        {
+            int buildNumberValue;
+
+            // Attempt to parse - this should probably fail since it will only work if the only thing passed 
+            //  in through the BuildNumber is a number.  This is typically something like: "Buildname.year.month.buildNumber"
+            var isNumber = int.TryParse(internalBuildNumber, out buildNumberValue);
+
+            if (!isNumber)
+            {
+                var buildNumberArray = internalBuildNumber.Split('.');
+
+                const string exceptionString =
+                    "'Build Number Format' in the build definition must end with $(Rev:.r) to use the build number in the version pattern.  Suggested pattern: $(BuildDefinitionName)_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)";
+
+                if (buildNumberArray.Length < 2)
+                {
+                    throw new ArgumentException(exceptionString);
+                }
+
+                isNumber = int.TryParse(buildNumberArray[buildNumberArray.Length - 1], out buildNumberValue);
+
+                if (isNumber == false)
+                {
+                    throw new ArgumentException(exceptionString);
+                }
+            }
+
+            return AddBuildNumberPrefixIfNecessary(buildNumberPrefix, buildNumberValue + buildNumberSeed);
         }
 
         public static string StripDomain(string userId)
